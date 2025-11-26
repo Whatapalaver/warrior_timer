@@ -3,6 +3,13 @@
   data-controller="timer audio"
   data-timer-segments-value="<%= segments_json %>"
 >
+  <!-- Home Button -->
+  <div class="fixed top-4 left-4 z-10">
+    <%= link_to root_path, class: "inline-block px-4 py-2 bg-slate-800/80 hover:bg-slate-700/80 rounded-lg text-sm font-semibold transition-colors" do %>
+      ← Home
+    <% end %>
+  </div>
+
   <div class="flex-1 flex items-center justify-center lg:pr-80">
     <div class="w-full max-w-4xl p-8">
       <!-- Current segment type -->

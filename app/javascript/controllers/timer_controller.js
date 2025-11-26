@@ -29,10 +29,23 @@ export default class extends Controller {
     if (this.hasSegmentsValue && this.segmentsValue.length > 0) {
       this.updateDisplay()
     }
+
+    // Add keyboard shortcut for spacebar
+    this.handleKeydown = this.handleKeydown.bind(this)
+    document.addEventListener('keydown', this.handleKeydown)
   }
 
   disconnect() {
     this.stop()
+    document.removeEventListener('keydown', this.handleKeydown)
+  }
+
+  handleKeydown(event) {
+    // Spacebar to start/pause
+    if (event.code === 'Space') {
+      event.preventDefault()
+      this.startPause()
+    }
   }
 
   startPause() {
