@@ -1,0 +1,29 @@
+<div class="hidden lg:block lg:fixed lg:right-0 lg:top-0 lg:h-screen lg:w-80 lg:overflow-y-auto bg-slate-800/50 p-4 border-l border-slate-700">
+  <h2 class="text-lg font-bold mb-4 text-slate-300">Workout Overview</h2>
+
+  <div class="space-y-2">
+    <% @segments.each_with_index do |segment, index| %>
+      <div
+        class="p-3 rounded-lg <%= segment_color_class(segment[:segment_type]) %> text-sm"
+        data-timer-target="overviewSegment"
+        data-segment-index="<%= index %>"
+      >
+        <div class="flex justify-between items-center">
+          <span class="font-semibold"><%= segment_label(segment) %></span>
+          <span class="font-mono"><%= format_time(segment[:duration_seconds]) %></span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-4 pt-4 border-t border-slate-700 text-sm text-slate-400">
+    <div class="flex justify-between">
+      <span>Total Time:</span>
+      <span class="font-mono"><%= format_time(@segments.sum { |s| s[:duration_seconds] }) %></span>
+    </div>
+    <div class="flex justify-between mt-1">
+      <span>Segments:</span>
+      <span><%= @segments.length %></span>
+    </div>
+  </div>
+</div>

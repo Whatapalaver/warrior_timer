@@ -1,44 +1,49 @@
 <div
-  class="min-h-screen flex items-center justify-center transition-colors duration-500"
+  class="min-h-screen flex transition-colors duration-500"
   data-controller="timer audio"
   data-timer-segments-value="<%= segments_json %>"
 >
-  <div class="w-full max-w-4xl p-8">
-    <!-- Current segment type -->
-    <div class="text-center mb-8">
-      <h1
-        class="text-6xl md:text-8xl font-bold uppercase tracking-wider"
-        data-timer-target="segmentType"
-      >
-        Ready
-      </h1>
-    </div>
+  <div class="flex-1 flex items-center justify-center lg:pr-80">
+    <div class="w-full max-w-4xl p-8">
+      <!-- Current segment type -->
+      <div class="text-center mb-8">
+        <h1
+          class="text-6xl md:text-8xl font-bold uppercase tracking-wider"
+          data-timer-target="segmentType"
+        >
+          Ready
+        </h1>
+      </div>
 
-    <!-- Main countdown -->
-    <div class="text-center mb-8">
+      <!-- Main countdown -->
+      <div class="text-center mb-8">
+        <div
+          class="text-9xl md:text-[12rem] font-bold tabular-nums"
+          data-timer-target="countdown"
+        >
+          00:00
+        </div>
+      </div>
+
+      <!-- Round info -->
       <div
-        class="text-9xl md:text-[12rem] font-bold tabular-nums"
-        data-timer-target="countdown"
+        class="text-center mb-8 text-2xl md:text-3xl opacity-75"
+        data-timer-target="roundInfo"
       >
-        00:00
+      </div>
+
+      <!-- Controls -->
+      <%= render Timer::ControlsComponent.new %>
+
+      <!-- Progress -->
+      <div class="mt-8 text-center opacity-75">
+        <p class="text-lg" data-timer-target="progress">
+          Segment 0 of <%= @segments.length %>
+        </p>
       </div>
     </div>
-
-    <!-- Round info -->
-    <div
-      class="text-center mb-8 text-2xl md:text-3xl opacity-75"
-      data-timer-target="roundInfo"
-    >
-    </div>
-
-    <!-- Controls -->
-    <%= render Timer::ControlsComponent.new %>
-
-    <!-- Progress -->
-    <div class="mt-8 text-center opacity-75">
-      <p class="text-lg" data-timer-target="progress">
-        Segment 0 of <%= @segments.length %>
-      </p>
-    </div>
   </div>
+
+  <!-- Workout Overview Sidebar (desktop only) -->
+  <%= render Workout::OverviewComponent.new(segments: @segments) %>
 </div>

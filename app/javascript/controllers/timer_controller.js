@@ -6,7 +6,8 @@ export default class extends Controller {
     "segmentType",
     "roundInfo",
     "progress",
-    "startPauseButton"
+    "startPauseButton",
+    "overviewSegment"
   ]
 
   static values = {
@@ -147,6 +148,7 @@ export default class extends Controller {
       this.countdownTarget.textContent = "00:00"
       this.roundInfoTarget.textContent = ""
       this.progressTarget.textContent = `Segment 0 of ${this.segmentsValue.length}`
+      this.highlightOverviewSegment(-1)
     } else {
       const segment = this.segmentsValue[this.currentSegmentIndex]
 
@@ -165,7 +167,23 @@ export default class extends Controller {
 
       // Update progress
       this.progressTarget.textContent = `Segment ${this.currentSegmentIndex + 1} of ${this.segmentsValue.length}`
+
+      // Highlight current segment in overview
+      this.highlightOverviewSegment(this.currentSegmentIndex)
     }
+  }
+
+  highlightOverviewSegment(index) {
+    if (!this.hasOverviewSegmentTarget) return
+
+    this.overviewSegmentTargets.forEach((segment, i) => {
+      if (i === index) {
+        segment.classList.add('ring-2', 'ring-white')
+        segment.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      } else {
+        segment.classList.remove('ring-2', 'ring-white')
+      }
+    })
   }
 
   updateBackgroundColor() {
