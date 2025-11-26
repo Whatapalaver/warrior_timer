@@ -6,16 +6,25 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Gym interval timer for warriors. Create custom workout intervals with URL-based configuration.">
+    <meta name="theme-color" content="#ef4444">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Warrior Timer">
+
+    <!-- Icons -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-precomposed.png">
+    <link rel="manifest" href="/manifest.json">
 
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-slate-900 text-white">
+  <body class="bg-slate-900 text-white" data-controller="pwa">
     <%= yield %>
   </body>
 </html>
