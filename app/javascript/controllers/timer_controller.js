@@ -19,6 +19,12 @@ export default class extends Controller {
     this.isRunning = false
     this.intervalId = null
 
+    // Get audio controller if available
+    this.audioController = this.application.getControllerForElementAndIdentifier(
+      document.querySelector('[data-controller~="audio"]'),
+      "audio"
+    )
+
     if (this.hasSegmentsValue && this.segmentsValue.length > 0) {
       this.updateDisplay()
     }
@@ -87,14 +93,27 @@ export default class extends Controller {
   tick() {
     this.timeRemaining--
 
+    // Play countdown beeps at 3, 2, 1
+    if (this.timeRemaining >= 1 && this.timeRemaining <= 3 && this.audioController) {
+      this.audioController.countdownBeep()
+    }
+
     if (this.timeRemaining <= 0) {
-      // Segment complete
+      // Segment complete - play transition beep
       if (this.currentSegmentIndex < this.segmentsValue.length - 1) {
+        const nextSegment = this.segmentsValue[this.currentSegmentIndex + 1]
+        if (this.audioController) {
+          this.audioController.transitionBeep(nextSegment.segment_type)
+        }
+
         // Move to next segment
         this.currentSegmentIndex++
         this.loadSegment()
       } else {
         // Workout complete
+        if (this.audioController) {
+          this.audioController.completeSound()
+        }
         this.complete()
       }
     } else {
