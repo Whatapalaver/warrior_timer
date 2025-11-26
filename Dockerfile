@@ -4,8 +4,9 @@ FROM ruby:$RUBY_VERSION-slim
 WORKDIR /rails
 
 ENV RAILS_ENV="production" \
-    BUNDLE_WITHOUT="development:test" \
-    BUNDLE_DEPLOYMENT="1"
+    BUNDLE_DEPLOYMENT="1" \
+    BUNDLE_PATH="/usr/local/bundle" \
+    BUNDLE_WITHOUT="development"
 
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
@@ -14,14 +15,13 @@ RUN apt-get update -qq && \
     git \
     libjemalloc2 \
     libvips \
-    node-gyp \
-    pkg-config \
-    python-is-python3 && \
+    pkg-config && \
     rm -rf /var/lib/apt/lists/*
 
 COPY Gemfile Gemfile.lock ./
-RUN bundle install && \
-    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache
+RUN bundle install --jobs 4 --retry 3 && \
+    bundle clean --force && \
+    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
 
 COPY . .
 
