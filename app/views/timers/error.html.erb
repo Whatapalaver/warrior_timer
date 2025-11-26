@@ -1,5 +1,5 @@
-<div class="min-h-screen bg-slate-900 text-white flex items-center justify-center p-4">
-  <div class="max-w-2xl w-full">
+<div class="min-h-screen bg-slate-900 text-white p-4">
+  <div class="max-w-4xl mx-auto py-8">
     <h1 class="text-4xl font-bold mb-4 text-red-500">Invalid Interval Syntax</h1>
     <p class="text-xl mb-4">There was an error parsing your interval definition:</p>
     <div class="bg-slate-800 p-4 rounded-lg mb-6">
@@ -9,6 +9,58 @@
     <div class="bg-slate-800 p-4 rounded-lg mb-6">
       <code class="text-amber-400"><%= @intervals_input %></code>
     </div>
-    <%= link_to "Back to Home", root_path, class: "inline-block bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 px-6 rounded-lg" %>
+    <%= link_to "Back to Home", root_path, class: "inline-block bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 px-6 rounded-lg mb-8" %>
+
+    <!-- Syntax Guide -->
+    <div class="mt-8 pt-8 border-t border-slate-700">
+      <h2 class="text-3xl font-bold mb-6">Syntax Guide</h2>
+
+      <div class="bg-slate-800 rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold mb-4 text-amber-400">Segment Types</h3>
+        <div class="grid md:grid-cols-2 gap-3 text-sm">
+          <div><code class="text-amber-500">p</code> <span class="text-slate-300">= Prepare</span></div>
+          <div><code class="text-orange-500">wu</code> <span class="text-slate-300">= Warmup</span></div>
+          <div><code class="text-red-500">w</code> <span class="text-slate-300">= Work</span></div>
+          <div><code class="text-emerald-500">r</code> <span class="text-slate-300">= Rest</span></div>
+          <div><code class="text-sky-500">cd</code> <span class="text-slate-300">= Cooldown</span></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold mb-4 text-amber-400">Time Formats</h3>
+        <div class="space-y-2 text-sm">
+          <div><code class="text-slate-300">30w</code> <span class="text-slate-400">- 30 seconds work</span></div>
+          <div><code class="text-slate-300">5mw</code> <span class="text-slate-400">- 5 minutes work</span></div>
+          <div><code class="text-slate-300">1:30w</code> <span class="text-slate-400">- 1 minute 30 seconds work</span></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold mb-4 text-amber-400">Sequencing</h3>
+        <div class="space-y-2 text-sm">
+          <div><code class="text-slate-300">30w+30r</code> <span class="text-slate-400">- Chain segments with +</span></div>
+          <div><code class="text-slate-300">10(30w30r)</code> <span class="text-slate-400">- Repeat 10 times</span></div>
+          <div><code class="text-slate-300">3(2(30w15r)60r)</code> <span class="text-slate-400">- Nested repetitions</span></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 rounded-lg p-6">
+        <h3 class="text-xl font-bold mb-4 text-amber-400">Common Examples</h3>
+        <div class="space-y-3 text-sm">
+          <div>
+            <code class="text-emerald-400">10(30w30r)</code>
+            <p class="text-slate-400 ml-4 mt-1">Simple intervals - 10 rounds of 30s work, 30s rest</p>
+          </div>
+          <div>
+            <code class="text-emerald-400">20(20w10r)</code>
+            <p class="text-slate-400 ml-4 mt-1">Tabata - 20 rounds of 20s work, 10s rest</p>
+          </div>
+          <div>
+            <code class="text-emerald-400">10p+5mwu+8(3mw1mr)+2mcd</code>
+            <p class="text-slate-400 ml-4 mt-1">Full workout - prep, warmup, 8 rounds, cooldown</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
