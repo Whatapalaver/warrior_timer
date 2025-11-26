@@ -91,6 +91,78 @@ RSpec.describe Intervals::Parser do
       end
     end
 
+    context 'with repetitions' do
+      it 'parses simple repetitions' do
+        result = described_class.new('10(30w30r)').parse
+        expected = []
+        10.times do
+          expected << { type: :work, duration: 30, repetition: true }
+          expected << { type: :rest, duration: 30, repetition: true }
+        end
+        expect(result).to eq(expected)
+      end
+
+      it 'parses repetitions with plus notation inside' do
+        result = described_class.new('5(30w+15r)').parse
+        expected = []
+        5.times do
+          expected << { type: :work, duration: 30, repetition: true }
+          expected << { type: :rest, duration: 15, repetition: true }
+        end
+        expect(result).to eq(expected)
+      end
+
+      it 'parses single item repetition' do
+        result = described_class.new('8(45w)').parse
+        expected = []
+        8.times do
+          expected << { type: :work, duration: 45, repetition: true }
+        end
+        expect(result).to eq(expected)
+      end
+    end
+
+    context 'with nested repetitions' do
+      it 'parses two levels of nesting' do
+        result = described_class.new('3(2(30w15r)60r)').parse
+        expected = []
+        3.times do
+          2.times do
+            expected << { type: :work, duration: 30, repetition: true }
+            expected << { type: :rest, duration: 15, repetition: true }
+          end
+          expected << { type: :rest, duration: 60, repetition: true }
+        end
+        expect(result).to eq(expected)
+      end
+    end
+
+    context 'with complex combinations' do
+      it 'parses full workout structure' do
+        result = described_class.new('10p+5mwu+8(3mw1mr)+2mcd').parse
+        expected = [
+          { type: :prepare, duration: 10 },
+          { type: :warmup, duration: 300 }
+        ]
+        8.times do
+          expected << { type: :work, duration: 180, repetition: true }
+          expected << { type: :rest, duration: 60, repetition: true }
+        end
+        expected << { type: :cooldown, duration: 120 }
+        expect(result).to eq(expected)
+      end
+
+      it 'parses tabata-style workout' do
+        result = described_class.new('20(20w10r)').parse
+        expected = []
+        20.times do
+          expected << { type: :work, duration: 20, repetition: true }
+          expected << { type: :rest, duration: 10, repetition: true }
+        end
+        expect(result).to eq(expected)
+      end
+    end
+
     context 'with invalid syntax' do
       it 'raises error for invalid segment type' do
         expect { described_class.new('30x').parse }.to raise_error(Intervals::Parser::ParseError, /unknown segment type/i)
@@ -102,6 +174,14 @@ RSpec.describe Intervals::Parser do
 
       it 'raises error for empty string' do
         expect { described_class.new('').parse }.to raise_error(Intervals::Parser::ParseError, /empty/i)
+      end
+
+      it 'raises error for mismatched parentheses' do
+        expect { described_class.new('10(30w').parse }.to raise_error(Intervals::Parser::ParseError, /parenthes/i)
+      end
+
+      it 'raises error for empty repetition' do
+        expect { described_class.new('10()').parse }.to raise_error(Intervals::Parser::ParseError)
       end
     end
   end

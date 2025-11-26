@@ -23,18 +23,153 @@ module Intervals
     private
 
     def parse_sequence(input)
-      # Split on + to get individual segments or groups
+      # Split on + to get individual segments or groups, but respect parentheses
       segments = []
-      input.split('+').each do |part|
+      parts = split_respecting_parens(input, '+')
+      parts.each do |part|
         segments.concat(parse_part(part.strip))
       end
       segments
     end
 
     def parse_part(part)
-      # For now, just parse simple segments
-      # We'll add repetition support in the next step
-      [parse_segment(part)]
+      # Check if this is a repetition: N(...)
+      if part =~ /^(\d+)\((.+)\)$/
+        count = $1.to_i
+        inner = $2
+
+        raise ParseError, "Empty repetition" if inner.strip.empty?
+
+        # Parse the inner content - could have + or be concatenated
+        inner_segments = parse_inner_sequence(inner)
+
+        # Repeat the segments
+        result = []
+        count.times do
+          inner_segments.each do |seg|
+            result << seg.merge(repetition: true)
+          end
+        end
+        result
+      else
+        # Simple segment
+        [parse_segment(part)]
+      end
+    end
+
+    def parse_inner_sequence(input)
+      # First check if there's a + (explicit sequencing)
+      if input.include?('+')
+        return parse_sequence(input)
+      end
+
+      # Otherwise, split into individual segments by tokenizing
+      # This handles cases like: 30w15r (two segments) or 2(30w15r)60r (nested + segment)
+      tokens = tokenize_concatenated(input)
+      segments = []
+
+      tokens.each do |token|
+        if token =~ /^\d+\(/
+          # This is a nested repetition
+          segments.concat(parse_part(token))
+        else
+          # This is a simple segment
+          segments << parse_segment(token)
+        end
+      end
+
+      segments
+    end
+
+    def tokenize_concatenated(input)
+      tokens = []
+      i = 0
+
+      while i < input.length
+        # Skip whitespace
+        if input[i] =~ /\s/
+          i += 1
+          next
+        end
+
+        # Check for repetition pattern: N(...)
+        if input[i] =~ /\d/ && input[i..-1] =~ /^(\d+)\(/
+          # This is a repetition, find the matching closing paren
+          count_str = $1
+          paren_start = i + count_str.length
+          paren_end = find_matching_paren(input, paren_start)
+
+          raise ParseError, "Mismatched parentheses" if paren_end.nil?
+
+          token = input[i..paren_end]
+          tokens << token
+          i = paren_end + 1
+        elsif input[i] =~ /\d/
+          # This is a simple segment - match the segment type more precisely
+          # Segment types are: w, r, wu, cd, p (at most 2 characters)
+          if input[i..-1] =~ /^(\d+(?::\d+)?m?(?:wu|cd|[wrp]))/
+            tokens << $1
+            i += $1.length
+          else
+            i += 1
+          end
+        else
+          i += 1
+        end
+      end
+
+      tokens
+    end
+
+    def find_matching_paren(input, start_index)
+      return nil if input[start_index] != '('
+
+      depth = 1
+      i = start_index + 1
+
+      while i < input.length && depth > 0
+        case input[i]
+        when '('
+          depth += 1
+        when ')'
+          depth -= 1
+        end
+        i += 1
+      end
+
+      depth == 0 ? i - 1 : nil
+    end
+
+    def split_respecting_parens(input, delimiter)
+      parts = []
+      current = ""
+      depth = 0
+
+      input.each_char do |char|
+        case char
+        when '('
+          depth += 1
+          current << char
+        when ')'
+          depth -= 1
+          raise ParseError, "Mismatched parentheses" if depth < 0
+          current << char
+        when delimiter
+          if depth == 0
+            parts << current
+            current = ""
+          else
+            current << char
+          end
+        else
+          current << char
+        end
+      end
+
+      raise ParseError, "Mismatched parentheses" if depth != 0
+
+      parts << current unless current.empty?
+      parts
     end
 
     def parse_segment(segment)
