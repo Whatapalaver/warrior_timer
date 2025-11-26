@@ -4,6 +4,7 @@ export default class extends Controller {
   connect() {
     // Create audio context for beeps
     this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    this.enabled = false
   }
 
   disconnect() {
@@ -12,9 +13,22 @@ export default class extends Controller {
     }
   }
 
+  // Resume audio context (call this on user interaction)
+  async resume() {
+    if (this.audioContext && this.audioContext.state === 'suspended') {
+      await this.audioContext.resume()
+    }
+    this.enabled = true
+  }
+
   // Play a beep sound
   beep(frequency = 440, duration = 100, volume = 0.3) {
-    if (!this.audioContext) return
+    if (!this.audioContext || !this.enabled) return
+
+    // Ensure audio context is running
+    if (this.audioContext.state === 'suspended') {
+      this.audioContext.resume()
+    }
 
     const oscillator = this.audioContext.createOscillator()
     const gainNode = this.audioContext.createGain()

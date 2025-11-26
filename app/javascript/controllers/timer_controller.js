@@ -57,6 +57,11 @@ export default class extends Controller {
   }
 
   start() {
+    // Enable audio on first user interaction
+    if (this.audioController) {
+      this.audioController.resume()
+    }
+
     if (this.currentSegmentIndex === -1) {
       // Start from the beginning
       this.currentSegmentIndex = 0
