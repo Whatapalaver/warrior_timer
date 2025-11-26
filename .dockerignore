@@ -35,3 +35,9 @@
 /app/assets/builds/*
 !/app/assets/builds/.keep
 /public/assets
+
+# Ignore deployment files
+Dockerfile*
+fly.toml
+README.md
+.gitignore
