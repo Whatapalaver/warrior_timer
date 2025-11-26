@@ -1,0 +1,14 @@
+<div class="min-h-screen bg-slate-900 text-white flex items-center justify-center p-4">
+  <div class="max-w-2xl w-full">
+    <h1 class="text-4xl font-bold mb-4 text-red-500">Invalid Interval Syntax</h1>
+    <p class="text-xl mb-4">There was an error parsing your interval definition:</p>
+    <div class="bg-slate-800 p-4 rounded-lg mb-6">
+      <code class="text-red-400"><%= @error %></code>
+    </div>
+    <p class="mb-4">You tried to parse:</p>
+    <div class="bg-slate-800 p-4 rounded-lg mb-6">
+      <code class="text-amber-400"><%= @intervals_input %></code>
+    </div>
+    <%= link_to "Back to Home", root_path, class: "inline-block bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 px-6 rounded-lg" %>
+  </div>
+</div>
