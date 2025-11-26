@@ -19,7 +19,8 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists/*
 
 COPY Gemfile Gemfile.lock ./
-RUN bundle install --jobs 4 --retry 3 && \
+RUN bundle lock --add-platform x86_64-linux && \
+    bundle install && \
     bundle clean --force && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
 
