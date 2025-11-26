@@ -10,6 +10,41 @@
       </p>
     </div>
 
+    <!-- Interval Builder -->
+    <div class="max-w-4xl mx-auto mb-16" data-controller="interval-builder">
+      <div class="bg-slate-800 rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-4">Build Your Workout</h2>
+        <p class="text-slate-400 mb-4 text-sm">Type your interval definition below and see a live preview</p>
+
+        <div class="mb-4">
+          <input
+            type="text"
+            data-interval-builder-target="input"
+            data-action="input->interval-builder#parse"
+            placeholder="Try: 10(30w30r) or 10p+5mwu+8(3mw1mr)+2mcd"
+            class="w-full px-4 py-3 bg-slate-700 text-white rounded-lg border-2 border-slate-600 focus:border-amber-500 focus:outline-none text-lg font-mono"
+          />
+        </div>
+
+        <div data-interval-builder-target="error" class="hidden mb-4 p-3 bg-red-900/20 border border-red-500 rounded text-red-300 text-sm"></div>
+
+        <div data-interval-builder-target="preview" class="mb-4">
+          <div class="text-center text-slate-400 py-8">
+            <p class="text-lg">Start typing to see a preview...</p>
+            <p class="text-sm mt-2">Try: <code class="text-amber-400">10(30w30r)</code></p>
+          </div>
+        </div>
+
+        <a
+          href="#"
+          data-interval-builder-target="goButton"
+          class="hidden inline-block w-full text-center bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 px-6 rounded-lg transition-colors"
+        >
+          Go to Timer →
+        </a>
+      </div>
+    </div>
+
     <!-- Quick Start Examples -->
     <div class="max-w-4xl mx-auto mb-16">
       <h2 class="text-3xl font-bold mb-6 text-center">Quick Start Examples</h2>
