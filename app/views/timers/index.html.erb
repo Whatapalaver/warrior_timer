@@ -1,4 +1,127 @@
-<div>
-  <h1 class="font-bold text-4xl">Timers#index</h1>
-  <p>Find me in app/views/timers/index.html.erb</p>
+<div class="min-h-screen bg-slate-900 text-white">
+  <!-- Hero Section -->
+  <div class="container mx-auto px-4 py-16">
+    <div class="text-center mb-16">
+      <h1 class="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-amber-500 via-red-500 to-emerald-500 bg-clip-text text-transparent">
+        Warrior Timer
+      </h1>
+      <p class="text-xl md:text-2xl text-slate-300 mb-8">
+        A gym interval timer with URL-based interval definitions
+      </p>
+    </div>
+
+    <!-- Quick Start Examples -->
+    <div class="max-w-4xl mx-auto mb-16">
+      <h2 class="text-3xl font-bold mb-6 text-center">Quick Start Examples</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="<%= timer_path(intervals: '10(30w30r)') %>" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors">
+          <h3 class="text-xl font-bold mb-2 text-amber-400">Simple Intervals</h3>
+          <code class="text-sm text-slate-300">10(30w30r)</code>
+          <p class="text-sm text-slate-400 mt-2">10 rounds of 30s work, 30s rest</p>
+        </a>
+
+        <a href="<%= timer_path(intervals: '20(20w10r)') %>" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors">
+          <h3 class="text-xl font-bold mb-2 text-red-400">Tabata</h3>
+          <code class="text-sm text-slate-300">20(20w10r)</code>
+          <p class="text-sm text-slate-400 mt-2">20 rounds of 20s work, 10s rest</p>
+        </a>
+
+        <a href="<%= timer_path(intervals: '10p+5mwu+8(3mw1mr)+2mcd') %>" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors md:col-span-2">
+          <h3 class="text-xl font-bold mb-2 text-emerald-400">Full Workout</h3>
+          <code class="text-sm text-slate-300">10p+5mwu+8(3mw1mr)+2mcd</code>
+          <p class="text-sm text-slate-400 mt-2">10s prep, 5min warmup, 8 rounds of 3min work / 1min rest, 2min cooldown</p>
+        </a>
+
+        <a href="<%= timer_path(intervals: '3(2(30w15r)60r)') %>" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors md:col-span-2">
+          <h3 class="text-xl font-bold mb-2 text-sky-400">Nested Intervals</h3>
+          <code class="text-sm text-slate-300">3(2(30w15r)60r)</code>
+          <p class="text-sm text-slate-400 mt-2">3 sets of: 2 rounds of 30s work/15s rest, then 60s rest</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Syntax Guide -->
+    <div class="max-w-4xl mx-auto mb-16">
+      <h2 class="text-3xl font-bold mb-6 text-center">Syntax Guide</h2>
+
+      <div class="bg-slate-800 rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold mb-4 text-amber-400">Segment Types</h3>
+        <div class="grid md:grid-cols-2 gap-3 text-sm">
+          <div><code class="text-amber-500">p</code> <span class="text-slate-300">= Prepare</span></div>
+          <div><code class="text-orange-500">wu</code> <span class="text-slate-300">= Warmup</span></div>
+          <div><code class="text-red-500">w</code> <span class="text-slate-300">= Work</span></div>
+          <div><code class="text-emerald-500">r</code> <span class="text-slate-300">= Rest</span></div>
+          <div><code class="text-sky-500">cd</code> <span class="text-slate-300">= Cooldown</span></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold mb-4 text-amber-400">Time Formats</h3>
+        <div class="space-y-2 text-sm">
+          <div><code class="text-slate-300">30w</code> <span class="text-slate-400">- 30 seconds work</span></div>
+          <div><code class="text-slate-300">5mw</code> <span class="text-slate-400">- 5 minutes work</span></div>
+          <div><code class="text-slate-300">1:30w</code> <span class="text-slate-400">- 1 minute 30 seconds work</span></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold mb-4 text-amber-400">Sequencing</h3>
+        <div class="space-y-2 text-sm">
+          <div><code class="text-slate-300">30w+30r</code> <span class="text-slate-400">- Chain segments with +</span></div>
+          <div><code class="text-slate-300">10(30w30r)</code> <span class="text-slate-400">- Repeat 10 times</span></div>
+          <div><code class="text-slate-300">3(2(30w15r)60r)</code> <span class="text-slate-400">- Nested repetitions</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="max-w-4xl mx-auto mb-16">
+      <h2 class="text-3xl font-bold mb-6 text-center">How It Works</h2>
+      <div class="bg-slate-800 rounded-lg p-6">
+        <ol class="space-y-4 text-slate-300">
+          <li class="flex gap-4">
+            <span class="flex-shrink-0 w-8 h-8 bg-amber-500 text-slate-900 rounded-full flex items-center justify-center font-bold">1</span>
+            <div>
+              <strong class="text-white">Define your intervals</strong> using the syntax above
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span class="flex-shrink-0 w-8 h-8 bg-amber-500 text-slate-900 rounded-full flex items-center justify-center font-bold">2</span>
+            <div>
+              <strong class="text-white">Add to URL:</strong> <code class="text-sm bg-slate-700 px-2 py-1 rounded">/timer/YOUR_INTERVALS</code>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span class="flex-shrink-0 w-8 h-8 bg-amber-500 text-slate-900 rounded-full flex items-center justify-center font-bold">3</span>
+            <div>
+              <strong class="text-white">Start training!</strong> The timer will guide you through each segment with visual and audio cues
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold mb-6 text-center">Features</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-slate-800 rounded-lg p-6 text-center">
+          <div class="text-4xl mb-3">🎨</div>
+          <h3 class="font-bold mb-2">Color-Coded</h3>
+          <p class="text-sm text-slate-400">Different colors for each segment type</p>
+        </div>
+        <div class="bg-slate-800 rounded-lg p-6 text-center">
+          <div class="text-4xl mb-3">🔊</div>
+          <h3 class="font-bold mb-2">Audio Cues</h3>
+          <p class="text-sm text-slate-400">Countdown beeps and transition sounds</p>
+        </div>
+        <div class="bg-slate-800 rounded-lg p-6 text-center">
+          <div class="text-4xl mb-3">📱</div>
+          <h3 class="font-bold mb-2">Mobile-First</h3>
+          <p class="text-sm text-slate-400">Optimized for viewing across the gym</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
