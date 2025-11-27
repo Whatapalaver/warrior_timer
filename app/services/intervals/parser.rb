@@ -23,18 +23,24 @@ module Intervals
     private
 
     def parse_sequence(input)
-      # Split on + to get individual segments or groups, but respect parentheses
-      segments = []
-      parts = split_respecting_parens(input, '+')
-      parts.each do |part|
-        segments.concat(parse_part(part.strip))
+      # First check if there's explicit + sequencing
+      if input.include?('+')
+        # Split on + to get individual segments or groups, but respect parentheses
+        segments = []
+        parts = split_respecting_parens(input, '+')
+        parts.each do |part|
+          segments.concat(parse_part(part.strip))
+        end
+        return segments
       end
-      segments
+
+      # No explicit +, treat as concatenated segments
+      parse_inner_sequence(input)
     end
 
     def parse_part(part)
-      # Check if this is a repetition: N(...)
-      if part =~ /^(\d+)\((.+)\)$/
+      # Check if this is a repetition: N(...) - allow empty parens to catch and error on them
+      if part =~ /^(\d+)\((.*)\)$/
         count = $1.to_i
         inner = $2
 
@@ -52,8 +58,16 @@ module Intervals
         end
         result
       else
-        # Simple segment
-        [parse_segment(part)]
+        # Could be a simple segment or concatenated segments
+        # Check if it matches a valid simple segment pattern
+        # Valid segment types: w, r, wu, cd, p (1-2 chars)
+        if part =~ /^(\d+(?::\d+)?m?)(wu|cd|[wrp])$/
+          # Simple segment
+          [parse_segment(part)]
+        else
+          # Must be concatenated segments - tokenize them
+          parse_inner_sequence(part)
+        end
       end
     end
 
@@ -66,6 +80,12 @@ module Intervals
       # Otherwise, split into individual segments by tokenizing
       # This handles cases like: 30w15r (two segments) or 2(30w15r)60r (nested + segment)
       tokens = tokenize_concatenated(input)
+
+      # Validate that we got tokens - if input had content but produced no tokens, it's invalid
+      if tokens.empty? && !input.strip.empty?
+        raise ParseError, "Unable to parse input: #{input}"
+      end
+
       segments = []
 
       tokens.each do |token|

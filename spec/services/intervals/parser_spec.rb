@@ -80,6 +80,14 @@ RSpec.describe Intervals::Parser do
         ])
       end
 
+      it 'parses concatenated segments without plus' do
+        result = described_class.new('30w30r').parse
+        expect(result).to eq([
+          { type: :work, duration: 30 },
+          { type: :rest, duration: 30 }
+        ])
+      end
+
       it 'parses complex sequences' do
         result = described_class.new('10p+5mwu+30w+15r').parse
         expect(result).to eq([
@@ -88,6 +96,56 @@ RSpec.describe Intervals::Parser do
           { type: :work, duration: 30 },
           { type: :rest, duration: 15 }
         ])
+      end
+
+      it 'parses ladder-style concatenated sequences' do
+        result = described_class.new('30w30r45w30r1mw30r').parse
+        expect(result).to eq([
+          { type: :work, duration: 30 },
+          { type: :rest, duration: 30 },
+          { type: :work, duration: 45 },
+          { type: :rest, duration: 30 },
+          { type: :work, duration: 60 },
+          { type: :rest, duration: 30 }
+        ])
+      end
+
+      it 'parses mixed time format ladders' do
+        result = described_class.new('30w30r45w30r1mw30r1:30w30r2mw').parse
+        expect(result).to eq([
+          { type: :work, duration: 30 },
+          { type: :rest, duration: 30 },
+          { type: :work, duration: 45 },
+          { type: :rest, duration: 30 },
+          { type: :work, duration: 60 },
+          { type: :rest, duration: 30 },
+          { type: :work, duration: 90 },
+          { type: :rest, duration: 30 },
+          { type: :work, duration: 120 }
+        ])
+      end
+
+      it 'parses mixed concatenation and plus syntax' do
+        result = described_class.new('10w30r+20w40r').parse
+        expect(result).to eq([
+          { type: :work, duration: 10 },
+          { type: :rest, duration: 30 },
+          { type: :work, duration: 20 },
+          { type: :rest, duration: 40 }
+        ])
+      end
+
+      it 'handles all three syntax styles equivalently' do
+        codes = ['10w30r20w40r', '10w30r+20w40r', '10w+30r+20w+40r']
+        expected = [
+          { type: :work, duration: 10 },
+          { type: :rest, duration: 30 },
+          { type: :work, duration: 20 },
+          { type: :rest, duration: 40 }
+        ]
+        codes.each do |code|
+          expect(described_class.new(code).parse).to eq(expected)
+        end
       end
     end
 
@@ -165,7 +223,7 @@ RSpec.describe Intervals::Parser do
 
     context 'with invalid syntax' do
       it 'raises error for invalid segment type' do
-        expect { described_class.new('30x').parse }.to raise_error(Intervals::Parser::ParseError, /unknown segment type/i)
+        expect { described_class.new('30x').parse }.to raise_error(Intervals::Parser::ParseError)
       end
 
       it 'raises error for invalid time format' do

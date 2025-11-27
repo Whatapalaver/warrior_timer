@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   # Timer routes
   root "timers#index"
+  get "protocols", to: "protocols#index", as: :protocols
   get "timer/:intervals", to: "timers#show", as: :timer, constraints: { intervals: /[^\/]+/ }
 
   # API routes
