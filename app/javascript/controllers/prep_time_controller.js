@@ -11,14 +11,18 @@ export default class extends Controller {
     const prepSegment = `${seconds}p`
 
     // Get current intervals from the URL or value
-    const currentIntervals = this.currentIntervalsValue
+    let currentIntervals = this.currentIntervalsValue
 
-    // Prepend prep time to intervals
+    // Remove any existing prep time at the start (e.g., "10p+" or "30p+")
+    // This regex matches prep time at the start: digits followed by 'p' and optional '+'
+    currentIntervals = currentIntervals.replace(/^\d+p\+?/, '')
+
+    // Prepend new prep time to intervals
     const newIntervals = currentIntervals
       ? `${prepSegment}+${currentIntervals}`
       : prepSegment
 
-    // Update URL and reload - don't encode the intervals string
+    // Update URL and reload
     window.location.href = `/timer/${newIntervals}`
   }
 }
