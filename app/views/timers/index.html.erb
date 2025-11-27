@@ -99,35 +99,17 @@
             'sky' => 'text-sky-400',
             'purple' => 'text-purple-400'
           }
-
-          segment_colors = {
-            prepare: 'bg-amber-500',
-            warmup: 'bg-orange-500',
-            work: 'bg-red-600',
-            rest: 'bg-emerald-500',
-            cooldown: 'bg-sky-500'
-          }
         %>
 
         <% examples.each do |example| %>
-          <%
-            parser = Intervals::Parser.new(example[:intervals])
-            segments = parser.parse
-          %>
           <%= link_to timer_path(intervals: example[:intervals]), class: "block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors" do %>
             <h3 class="text-xl font-bold mb-2 <%= color_classes[example[:color]] %>"><%= example[:title] %></h3>
             <code class="text-sm text-slate-300"><%= example[:intervals] %></code>
             <p class="text-sm text-slate-400 mt-2"><%= example[:description] %></p>
 
             <!-- Visual Preview -->
-            <div class="mt-4 flex gap-1 h-8">
-              <% segments.each do |segment| %>
-                <div
-                  class="<%= segment_colors[segment[:segment_type]] %> rounded-sm"
-                  style="flex: <%= segment[:duration_seconds] %>;"
-                  title="<%= segment[:segment_type].to_s.capitalize %> - <%= segment[:duration_seconds] %>s"
-                ></div>
-              <% end %>
+            <div class="mt-4">
+              <%= render(ProtocolPreviewComponent.new(code: example[:intervals])) %>
             </div>
           <% end %>
         <% end %>
