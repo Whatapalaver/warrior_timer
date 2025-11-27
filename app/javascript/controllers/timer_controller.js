@@ -117,6 +117,7 @@ export default class extends Controller {
     this.isRunning = false
     this.startPauseButtonTarget.textContent = "Start"
     this.updateDisplay()
+    this.resetBackgroundColor()
     this.showSetupUI()
   }
 
@@ -180,6 +181,7 @@ export default class extends Controller {
 
     // Reset to ready state
     this.currentSegmentIndex = -1
+    this.resetBackgroundColor()
     this.showSetupUI()
   }
 
@@ -285,13 +287,23 @@ export default class extends Controller {
     const segment = this.segmentsValue[this.currentSegmentIndex]
     const colorClass = colors[segment.segment_type] || colors.work
 
-    // Remove all color classes
+    // Remove all color classes including default
     Object.values(colors).forEach(c => {
       c.split(' ').forEach(cls => this.element.classList.remove(cls))
     })
+    this.element.classList.remove('bg-slate-900', 'text-white')
 
     // Add new color classes
     colorClass.split(' ').forEach(cls => this.element.classList.add(cls))
+  }
+
+  resetBackgroundColor() {
+    // Explicitly remove all possible background and text color classes
+    this.element.classList.remove('bg-amber-500', 'bg-orange-500', 'bg-red-600', 'bg-emerald-500', 'bg-sky-500')
+    this.element.classList.remove('text-slate-900', 'text-white')
+
+    // Then add back the default classes
+    this.element.classList.add('bg-slate-900', 'text-white')
   }
 
   formatSegmentType(type) {
