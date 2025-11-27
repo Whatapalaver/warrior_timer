@@ -1,0 +1,10 @@
+<div class="h-6 w-full flex rounded overflow-hidden border border-slate-600">
+  <% segments.each do |segment| %>
+    <div
+      class="<%= segment_color(segment) %> transition-all hover:brightness-110"
+      style="width: <%= segment_width(segment, total_duration) %>%"
+      title="<%= segment[:segment_type].to_s.capitalize %>: <%= segment[:duration_seconds] %>s"
+    >
+    </div>
+  <% end %>
+</div>
