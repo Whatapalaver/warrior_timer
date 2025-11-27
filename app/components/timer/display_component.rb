@@ -23,8 +23,9 @@ module Timer
       }
     }.freeze
 
-    def initialize(segments:)
+    def initialize(segments:, intervals_param: nil)
       @segments = segments
+      @intervals_param = intervals_param
     end
 
     def segments_json
