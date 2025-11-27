@@ -116,10 +116,116 @@ bundle exec rspec
 The app uses:
 - Propshaft for asset pipeline
 - Import maps for JavaScript
-- Tailwind CSS via tailwindcss-rails
+- Tailwind CSS v4 via npm
 - ViewComponent for reusable UI components
 
 No database is required - the app is completely stateless.
+
+### Building CSS
+
+Tailwind CSS is managed via npm:
+
+```bash
+# Build CSS once
+npm run build:css
+
+# Watch for changes during development
+npm run build:css -- --watch
+```
+
+Or use `bin/dev` which runs both the Rails server and CSS watcher in parallel.
+
+## Deployment
+
+### Fly.io Deployment
+
+The app is configured for deployment to Fly.io with the following setup:
+
+**Prerequisites:**
+- Install the [Fly CLI](https://fly.io/docs/hands-on/install-flyctl/)
+- Sign up for a Fly.io account: `fly auth signup`
+- Or log in: `fly auth login`
+
+**Initial Setup:**
+
+```bash
+# Launch the app (if not already created)
+fly launch
+
+# Follow the prompts to:
+# - Choose app name (e.g., warrior-timer)
+# - Select region (e.g., lhr for London)
+# - Don't add a database
+# - Don't deploy yet
+```
+
+**Deploy:**
+
+```bash
+# Deploy the app
+fly deploy
+
+# The app will be available at https://your-app-name.fly.dev
+```
+
+**Custom Domain Setup:**
+
+```bash
+# Add your custom domain
+fly certs add yourdomain.com
+
+# Follow the DNS instructions provided to point your domain to Fly.io
+```
+
+**View Logs:**
+
+```bash
+# Stream logs
+fly logs
+
+# View recent logs without streaming
+fly logs --no-tail
+```
+
+**Environment Variables:**
+
+The app requires no environment variables for basic operation. All configuration is baked into the Docker image during build.
+
+**Configuration Files:**
+- `Dockerfile` - Multi-stage build with Node.js and Ruby
+- `fly.toml` - Fly.io app configuration
+- `.dockerignore` - Files excluded from Docker build
+
+**Build Process:**
+1. Install Node.js 20.x and system dependencies
+2. Install Ruby gems
+3. Install npm packages (Tailwind CSS)
+4. Build CSS with Tailwind CLI
+5. Precompile Rails assets
+6. Run Puma on port 3000 bound to 0.0.0.0
+
+**Scaling:**
+
+```bash
+# Scale to more regions
+fly regions add ams syd
+
+# Scale machine count
+fly scale count 2
+```
+
+## PWA Features
+
+The app includes Progressive Web App functionality:
+- **Install to Home Screen**: Add the app to your phone/tablet home screen
+- **Offline Support**: Works without internet after initial load
+- **App-like Experience**: Runs in standalone mode when installed
+
+To install:
+- **iOS**: Open in **Safari** (not Chrome), tap Share button (⬆️) → Add to Home Screen
+  - Note: PWA installation is only supported in Safari on iOS, not in Chrome or other browsers
+- **Android**: Open in Chrome, tap menu (⋮) → Install app
+- **Desktop**: Look for install icon in address bar (Chrome, Edge, Safari)
 
 ## License
 
