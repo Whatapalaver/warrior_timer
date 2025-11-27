@@ -31,8 +31,8 @@ export default class extends Controller {
       return
     }
 
-    // Navigate to the new timer URL
-    window.location.href = `/timer/${encodeURIComponent(newIntervals)}`
+    // Navigate to the new timer URL - don't encode
+    window.location.href = `/timer/${newIntervals}`
   }
 
   // Allow Enter to apply, Escape to cancel
