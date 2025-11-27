@@ -7,7 +7,10 @@ export default class extends Controller {
     "roundInfo",
     "progress",
     "startPauseButton",
-    "overviewSegment"
+    "overviewSegment",
+    "mobileSegment",
+    "progressBar",
+    "timeRemaining"
   ]
 
   static outlets = ["audio"]
@@ -163,6 +166,7 @@ export default class extends Controller {
       this.roundInfoTarget.textContent = ""
       this.progressTarget.textContent = `Segment 0 of ${this.segmentsValue.length}`
       this.highlightOverviewSegment(-1)
+      this.updateMobileProgress()
     } else {
       const segment = this.segmentsValue[this.currentSegmentIndex]
 
@@ -184,6 +188,9 @@ export default class extends Controller {
 
       // Highlight current segment in overview
       this.highlightOverviewSegment(this.currentSegmentIndex)
+
+      // Update mobile progress
+      this.updateMobileProgress()
     }
   }
 
@@ -198,6 +205,47 @@ export default class extends Controller {
         segment.classList.remove('ring-2', 'ring-white')
       }
     })
+  }
+
+  updateMobileProgress() {
+    // Update mobile segment highlights
+    if (this.hasMobileSegmentTarget) {
+      this.mobileSegmentTargets.forEach((segment, i) => {
+        if (i === this.currentSegmentIndex) {
+          segment.classList.remove('opacity-50')
+          segment.classList.add('opacity-100', 'ring-2', 'ring-white')
+          segment.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+        } else if (i < this.currentSegmentIndex) {
+          segment.classList.add('opacity-30')
+          segment.classList.remove('opacity-50', 'opacity-100', 'ring-2', 'ring-white')
+        } else {
+          segment.classList.add('opacity-50')
+          segment.classList.remove('opacity-30', 'opacity-100', 'ring-2', 'ring-white')
+        }
+      })
+    }
+
+    // Update progress bar
+    if (this.hasProgressBarTarget) {
+      const totalSegments = this.segmentsValue.length
+      const progress = this.currentSegmentIndex === -1 ? 0 : ((this.currentSegmentIndex + 1) / totalSegments) * 100
+      this.progressBarTarget.style.width = `${progress}%`
+    }
+
+    // Update time remaining
+    if (this.hasTimeRemainingTarget) {
+      if (this.currentSegmentIndex === -1) {
+        const totalTime = this.segmentsValue.reduce((sum, s) => sum + s.duration_seconds, 0)
+        this.timeRemainingTarget.textContent = this.formatTime(totalTime)
+      } else {
+        // Calculate remaining time: current segment time + all future segments
+        let remainingTime = this.timeRemaining
+        for (let i = this.currentSegmentIndex + 1; i < this.segmentsValue.length; i++) {
+          remainingTime += this.segmentsValue[i].duration_seconds
+        }
+        this.timeRemainingTarget.textContent = this.formatTime(remainingTime)
+      }
+    }
   }
 
   updateBackgroundColor() {

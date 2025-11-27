@@ -25,11 +25,11 @@
   </div>
 
   <div class="flex-1 flex items-center justify-center lg:pr-80">
-    <div class="w-full max-w-4xl p-8">
+    <div class="w-full max-w-4xl px-4 py-8">
       <!-- Current segment type -->
       <div class="text-center mb-8">
         <h1
-          class="text-6xl md:text-8xl font-bold uppercase tracking-wider"
+          class="text-5xl md:text-6xl lg:text-8xl font-bold uppercase tracking-wider"
           data-timer-target="segmentType"
         >
           Ready
@@ -39,7 +39,7 @@
       <!-- Main countdown -->
       <div class="text-center mb-8">
         <div
-          class="text-9xl md:text-[12rem] font-bold tabular-nums"
+          class="text-7xl md:text-9xl lg:text-[12rem] font-bold tabular-nums"
           data-timer-target="countdown"
         >
           00:00
@@ -48,7 +48,7 @@
 
       <!-- Round info -->
       <div
-        class="text-center mb-8 text-2xl md:text-3xl opacity-75"
+        class="text-center mb-8 text-xl md:text-2xl lg:text-3xl opacity-75"
         data-timer-target="roundInfo"
       >
       </div>
@@ -61,6 +61,44 @@
         <p class="text-lg" data-timer-target="progress">
           Segment 0 of <%= @segments.length %>
         </p>
+      </div>
+
+      <!-- Mobile Progress Bar (visible only on mobile) -->
+      <div class="lg:hidden mt-8">
+        <div class="bg-slate-900 rounded-lg p-4 border-2 border-slate-600">
+          <div class="flex justify-between items-center mb-3 text-sm font-semibold">
+            <span class="text-white">Progress</span>
+            <span data-timer-target="timeRemaining" class="font-mono text-emerald-400">--:--</span>
+          </div>
+
+          <!-- Visual progress bar -->
+          <div class="relative h-4 bg-slate-800 rounded-full overflow-hidden mb-4 border border-slate-600">
+            <div
+              data-timer-target="progressBar"
+              class="absolute left-0 top-0 h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-300 shadow-lg shadow-emerald-500/50"
+              style="width: 0%"
+            ></div>
+          </div>
+
+          <!-- Compact segment list -->
+          <div class="space-y-1.5 max-h-40 overflow-y-auto">
+            <% @segments.each_with_index do |segment, index| %>
+              <div
+                class="flex items-center gap-2 text-xs p-2 rounded <%= mobile_segment_color_class(segment[:segment_type]) %> opacity-50 border border-transparent"
+                data-timer-target="mobileSegment"
+                data-segment-index="<%= index %>"
+              >
+                <span class="flex-1 font-bold"><%= segment_label(segment) %></span>
+                <span class="font-mono font-semibold"><%= format_time(segment[:duration_seconds]) %></span>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="mt-4 pt-3 border-t-2 border-slate-600 flex justify-between text-sm font-semibold">
+            <span class="text-white">Total Time:</span>
+            <span class="font-mono text-emerald-400"><%= format_time(@segments.sum { |s| s[:duration_seconds] }) %></span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
