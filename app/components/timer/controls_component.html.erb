@@ -27,7 +27,7 @@
   <div
     data-controller="prep-time"
     data-prep-time-current-intervals-value="<%= @intervals_param %>"
-    class="flex justify-center items-center gap-2"
+    class="flex justify-center items-center gap-2 flex-wrap"
   >
     <label class="text-sm opacity-75">Add Prep Time:</label>
     <input
@@ -46,5 +46,34 @@
     >
       Add
     </button>
+  </div>
+
+  <!-- Metronome Controls -->
+  <div class="flex justify-center items-center gap-3 flex-wrap border-t border-slate-700 pt-4">
+    <label class="flex items-center gap-2">
+      <input
+        type="checkbox"
+        data-timer-target="metronomeToggle"
+        data-action="change->timer#toggleMetronome"
+        class="w-5 h-5 rounded bg-slate-700 border-slate-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900"
+      />
+      <span class="text-sm font-semibold">Metronome</span>
+    </label>
+
+    <div class="flex items-center gap-2">
+      <label class="text-sm opacity-75">BPM:</label>
+      <input
+        type="number"
+        data-timer-target="metronomeBpm"
+        data-action="change->timer#updateMetronomeBpm"
+        class="w-16 px-2 py-1 bg-slate-700 text-white rounded text-center font-mono text-sm"
+        value="60"
+        min="1"
+        max="180"
+        step="1"
+      />
+    </div>
+
+    <span class="text-xs opacity-50">(Work segments only)</span>
   </div>
 </div>

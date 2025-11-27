@@ -75,4 +75,9 @@ export default class extends Controller {
       this.beep(1000, 150, 0.3)
     }, 200)
   }
+
+  // Metronome beep (low frequency, short duration)
+  metronomeBeep() {
+    this.beep(200, 50, 0.15)
+  }
 }

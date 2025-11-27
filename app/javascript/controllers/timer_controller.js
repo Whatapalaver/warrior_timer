@@ -10,7 +10,9 @@ export default class extends Controller {
     "overviewSegment",
     "mobileSegment",
     "progressBar",
-    "timeRemaining"
+    "timeRemaining",
+    "metronomeToggle",
+    "metronomeBpm"
   ]
 
   static outlets = ["audio"]
@@ -24,6 +26,9 @@ export default class extends Controller {
     this.timeRemaining = 0
     this.isRunning = false
     this.intervalId = null
+    this.metronomeEnabled = false
+    this.metronomeBpm = 60
+    this.metronomeIntervalId = null
 
     if (this.hasSegmentsValue && this.segmentsValue.length > 0) {
       this.updateDisplay()
@@ -32,10 +37,16 @@ export default class extends Controller {
     // Add keyboard shortcut for spacebar
     this.handleKeydown = this.handleKeydown.bind(this)
     document.addEventListener('keydown', this.handleKeydown)
+
+    // Initialize metronome BPM from input if present
+    if (this.hasMetronomeBpmTarget) {
+      this.metronomeBpm = parseInt(this.metronomeBpmTarget.value)
+    }
   }
 
   disconnect() {
     this.stop()
+    this.stopMetronome()
     document.removeEventListener('keydown', this.handleKeydown)
   }
 
@@ -74,12 +85,16 @@ export default class extends Controller {
     this.intervalId = setInterval(() => {
       this.tick()
     }, 1000)
+
+    // Start metronome if enabled and in work segment
+    this.updateMetronome()
   }
 
   pause() {
     this.isRunning = false
     this.startPauseButtonTarget.textContent = "Resume"
     this.stop()
+    this.stopMetronome()
   }
 
   stop() {
@@ -144,10 +159,12 @@ export default class extends Controller {
     this.timeRemaining = segment.duration_seconds
     this.updateDisplay()
     this.updateBackgroundColor()
+    this.updateMetronome()
   }
 
   complete() {
     this.stop()
+    this.stopMetronome()
     this.isRunning = false
     this.segmentTypeTarget.textContent = "Complete!"
     this.countdownTarget.textContent = "00:00"
@@ -284,5 +301,57 @@ export default class extends Controller {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+  }
+
+  // Metronome controls
+  toggleMetronome() {
+    this.metronomeEnabled = this.hasMetronomeToggleTarget ? this.metronomeToggleTarget.checked : false
+    console.log('Metronome toggled:', this.metronomeEnabled)
+    this.updateMetronome()
+  }
+
+  updateMetronomeBpm() {
+    this.metronomeBpm = parseInt(this.metronomeBpmTarget.value)
+    console.log('BPM updated:', this.metronomeBpm)
+    if (this.metronomeEnabled) {
+      // Restart metronome with new BPM if it's running
+      this.updateMetronome()
+    }
+  }
+
+  updateMetronome() {
+    // Stop existing metronome
+    this.stopMetronome()
+
+    // Check if metronome toggle exists and update enabled state
+    if (this.hasMetronomeToggleTarget) {
+      this.metronomeEnabled = this.metronomeToggleTarget.checked
+    }
+
+    // Only start metronome if enabled, running, and in a work segment
+    if (this.metronomeEnabled && this.isRunning && this.currentSegmentIndex >= 0) {
+      const segment = this.segmentsValue[this.currentSegmentIndex]
+      console.log('Current segment type:', segment.segment_type, 'Metronome enabled:', this.metronomeEnabled)
+      if (segment.segment_type === 'work') {
+        console.log('Starting metronome at', this.metronomeBpm, 'BPM')
+        this.startMetronome()
+      }
+    }
+  }
+
+  startMetronome() {
+    const interval = (60 / this.metronomeBpm) * 1000 // Convert BPM to milliseconds
+    this.metronomeIntervalId = setInterval(() => {
+      if (this.hasAudioOutlet) {
+        this.audioOutlet.metronomeBeep()
+      }
+    }, interval)
+  }
+
+  stopMetronome() {
+    if (this.metronomeIntervalId) {
+      clearInterval(this.metronomeIntervalId)
+      this.metronomeIntervalId = null
+    }
   }
 }
