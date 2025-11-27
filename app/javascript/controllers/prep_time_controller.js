@@ -18,7 +18,7 @@ export default class extends Controller {
       ? `${prepSegment}+${currentIntervals}`
       : prepSegment
 
-    // Update URL and reload
-    window.location.href = `/timer/${encodeURIComponent(newIntervals)}`
+    // Update URL and reload - don't encode the intervals string
+    window.location.href = `/timer/${newIntervals}`
   }
 }
