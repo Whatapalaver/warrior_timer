@@ -1,28 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input", "controls"]
+  static targets = ["input"]
   static values = {
-    currentIntervals: String,
-    defaultSeconds: { type: Number, default: 30 }
-  }
-
-  connect() {
-    this.inputTarget.value = this.defaultSecondsValue
-  }
-
-  toggle() {
-    this.controlsTarget.classList.toggle("hidden")
-  }
-
-  increment() {
-    const current = parseInt(this.inputTarget.value) || 0
-    this.inputTarget.value = Math.min(current + 5, 300) // max 5 minutes
-  }
-
-  decrement() {
-    const current = parseInt(this.inputTarget.value) || 0
-    this.inputTarget.value = Math.max(current - 5, 5) // min 5 seconds
+    currentIntervals: String
   }
 
   add() {

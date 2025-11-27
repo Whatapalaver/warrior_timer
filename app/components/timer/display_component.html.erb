@@ -13,66 +13,14 @@
       ← Home
     <% end %>
 
-    <div class="flex gap-2">
-      <!-- Prep Time Adjuster -->
-      <div
-        data-controller="prep-time"
-        data-prep-time-current-intervals-value="<%= @intervals_param %>"
-        class="relative"
+    <div data-controller="clipboard">
+      <button
+        data-clipboard-target="button"
+        data-action="click->clipboard#copy"
+        class="px-4 py-2 bg-slate-800/80 hover:bg-slate-700/80 rounded-lg text-sm font-semibold transition-colors"
       >
-        <button
-          data-action="click->prep-time#toggle"
-          class="px-4 py-2 bg-slate-800/80 hover:bg-slate-700/80 rounded-lg text-sm font-semibold transition-colors"
-        >
-          ⏱️ Add Prep
-        </button>
-
-        <div
-          data-prep-time-target="controls"
-          class="hidden absolute right-0 mt-2 p-4 bg-slate-800 rounded-lg shadow-lg border border-slate-700 min-w-[200px]"
-        >
-          <div class="text-xs text-slate-400 mb-2">Prep Time (seconds)</div>
-          <div class="flex items-center gap-2 mb-3">
-            <button
-              data-action="click->prep-time#decrement"
-              class="w-8 h-8 bg-slate-700 hover:bg-slate-600 rounded flex items-center justify-center font-bold transition-colors"
-            >
-              −
-            </button>
-            <input
-              type="number"
-              data-prep-time-target="input"
-              class="w-16 px-2 py-1 bg-slate-700 text-white rounded text-center font-mono"
-              min="5"
-              max="300"
-              step="5"
-            />
-            <button
-              data-action="click->prep-time#increment"
-              class="w-8 h-8 bg-slate-700 hover:bg-slate-600 rounded flex items-center justify-center font-bold transition-colors"
-            >
-              +
-            </button>
-          </div>
-          <button
-            data-action="click->prep-time#add"
-            class="w-full px-3 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 rounded font-semibold transition-colors"
-          >
-            Add to Timer
-          </button>
-        </div>
-      </div>
-
-      <!-- Copy Link -->
-      <div data-controller="clipboard">
-        <button
-          data-clipboard-target="button"
-          data-action="click->clipboard#copy"
-          class="px-4 py-2 bg-slate-800/80 hover:bg-slate-700/80 rounded-lg text-sm font-semibold transition-colors"
-        >
-          📋 Copy Link
-        </button>
-      </div>
+        📋 Copy Link
+      </button>
     </div>
   </div>
 
@@ -106,7 +54,7 @@
       </div>
 
       <!-- Controls -->
-      <%= render Timer::ControlsComponent.new %>
+      <%= render Timer::ControlsComponent.new(intervals_param: @intervals_param) %>
 
       <!-- Progress -->
       <div class="mt-8 text-center opacity-75">
