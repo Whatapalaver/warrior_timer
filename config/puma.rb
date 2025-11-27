@@ -32,7 +32,12 @@ end
 worker_timeout 3600 if ENV.fetch("RAILS_ENV", "development") == "development"
 
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
-port ENV.fetch("PORT") { 3000 }
+# In production (Fly.io), bind to all interfaces on port 3000
+if ENV["RAILS_ENV"] == "production"
+  bind "tcp://0.0.0.0:#{ENV.fetch('PORT') { 3000 }}"
+else
+  port ENV.fetch("PORT") { 3000 }
+end
 
 # Specifies the `environment` that Puma will run in.
 environment rails_env
