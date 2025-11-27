@@ -23,11 +23,12 @@
     </button>
   </div>
 
-  <!-- Prep Time Input -->
+  <!-- Prep Time Input (hidden when running) -->
   <div
+    data-timer-target="setupControls"
     data-controller="prep-time"
     data-prep-time-current-intervals-value="<%= @intervals_param %>"
-    class="flex justify-center items-center gap-2 flex-wrap"
+    class="flex justify-center items-center gap-2 flex-wrap transition-opacity duration-300"
   >
     <label class="text-sm opacity-75">Add Prep Time:</label>
     <input
@@ -48,8 +49,8 @@
     </button>
   </div>
 
-  <!-- Metronome Controls -->
-  <div class="flex justify-center items-center gap-3 flex-wrap border-t border-slate-700 pt-4">
+  <!-- Metronome Controls (hidden when running) -->
+  <div data-timer-target="setupControls" class="flex justify-center items-center gap-3 flex-wrap border-t border-slate-700 pt-4 transition-opacity duration-300">
     <label class="flex items-center gap-2">
       <input
         type="checkbox"

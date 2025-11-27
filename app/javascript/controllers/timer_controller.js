@@ -12,7 +12,10 @@ export default class extends Controller {
     "progressBar",
     "timeRemaining",
     "metronomeToggle",
-    "metronomeBpm"
+    "metronomeBpm",
+    "navButtons",
+    "setupControls",
+    "mobileProgress"
   ]
 
   static outlets = ["audio"]
@@ -81,6 +84,9 @@ export default class extends Controller {
     this.isRunning = true
     this.startPauseButtonTarget.textContent = "Pause"
 
+    // Hide setup controls and nav buttons when running
+    this.hideSetupUI()
+
     // Start the countdown
     this.intervalId = setInterval(() => {
       this.tick()
@@ -111,6 +117,7 @@ export default class extends Controller {
     this.isRunning = false
     this.startPauseButtonTarget.textContent = "Start"
     this.updateDisplay()
+    this.showSetupUI()
   }
 
   skip() {
@@ -173,6 +180,7 @@ export default class extends Controller {
 
     // Reset to ready state
     this.currentSegmentIndex = -1
+    this.showSetupUI()
   }
 
   updateDisplay() {
@@ -352,6 +360,53 @@ export default class extends Controller {
     if (this.metronomeIntervalId) {
       clearInterval(this.metronomeIntervalId)
       this.metronomeIntervalId = null
+    }
+  }
+
+  // UI visibility helpers
+  hideSetupUI() {
+    // Hide nav buttons (Home, Copy Link)
+    if (this.hasNavButtonsTarget) {
+      this.navButtonsTarget.style.opacity = '0'
+      this.navButtonsTarget.style.pointerEvents = 'none'
+    }
+
+    // Hide setup controls (Prep Time, Metronome)
+    if (this.hasSetupControlsTarget) {
+      this.setupControlsTargets.forEach(control => {
+        control.style.opacity = '0'
+        control.style.pointerEvents = 'none'
+        control.style.height = '0'
+        control.style.overflow = 'hidden'
+      })
+    }
+
+    // Show mobile progress
+    if (this.hasMobileProgressTarget) {
+      this.mobileProgressTarget.classList.remove('hidden')
+    }
+  }
+
+  showSetupUI() {
+    // Show nav buttons
+    if (this.hasNavButtonsTarget) {
+      this.navButtonsTarget.style.opacity = '1'
+      this.navButtonsTarget.style.pointerEvents = 'auto'
+    }
+
+    // Show setup controls
+    if (this.hasSetupControlsTarget) {
+      this.setupControlsTargets.forEach(control => {
+        control.style.opacity = '1'
+        control.style.pointerEvents = 'auto'
+        control.style.height = 'auto'
+        control.style.overflow = 'visible'
+      })
+    }
+
+    // Hide mobile progress
+    if (this.hasMobileProgressTarget) {
+      this.mobileProgressTarget.classList.add('hidden')
     }
   }
 }
