@@ -9,23 +9,35 @@ jobs:
   test:
     name: Run tests
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1.2'
           bundler-cache: true
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
       - name: Update Bundler
         run: |
           gem update --system
           gem install bundler
-      
+
       - name: Install dependencies
         run: bundle install
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Build CSS
+        run: npm run build:css
 
       - name: Run tests
         run: bundle exec rspec
