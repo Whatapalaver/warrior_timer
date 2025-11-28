@@ -18,7 +18,15 @@ jobs:
         with:
           ruby-version: '3.1.2'
           bundler-cache: true
+
+      - name: Update Bundler
+        run: |
+          gem update --system
+          gem install bundler
       
+      - name: Install dependencies
+        run: bundle install
+
       - name: Run tests
         run: bundle exec rspec
 
