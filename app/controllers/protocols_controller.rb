@@ -16,6 +16,22 @@ class ProtocolsController < ApplicationController
         ]
       },
       {
+        name: "Mark Wildman / Kettlebell",
+        description: "Mark Wildman's minimalist kettlebell protocols",
+        protocols: [
+          { name: "EMOM 10 Singles", code: "10(1mw)", description: "Every minute, 10 rounds. Single kettlebell work." },
+          { name: "E90s OM", code: "10(1:30w)", description: "Every 90 seconds, 10 rounds. Heavy work with rest." },
+          { name: "Simple Intervals 7×1:1", code: "7(1mw1mr)", description: "7 rounds of 1 min work, 1 min rest" },
+          { name: "Heavy Singles 5×2:1", code: "5(2mw1mr)", description: "5 rounds of 2 min work, 1 min rest. Heavy bells." },
+          { name: "Tetris Complex", code: "4(7(1mw1mr))", description: "4 blocks of 7 rounds. Wildman's Tetris protocol." },
+          { name: "Standard 5×1:1", code: "5(1mw1mr)", description: "Standard 5 round protocol" },
+          { name: "Extended 10×1:1", code: "10(1mw1mr)", description: "Extended work capacity builder" },
+          { name: "Continuous 5min", code: "5mw", description: "Continuous work for 5 minutes" },
+          { name: "Triple Tabata", code: "3(10(30w30r))", description: "3 exercises, Tabata timing each" },
+          { name: "Long Form 10min", code: "10mw", description: "Long form continuous work" }
+        ]
+      },
+      {
         name: "CrossFit / Functional Fitness",
         protocols: [
           { name: "EMOM 10", code: "10(1mw)", description: "Every Minute On the Minute. Do your reps, rest remainder." },
@@ -42,22 +58,6 @@ class ProtocolsController < ApplicationController
           { name: "TACFIT 30/30", code: "10(30w30r)", description: "Equal intervals for technique focus" },
           { name: "TACFIT 90/30 × 5 Doubles", code: "2(5(1:30w30r))", description: "5 exercises, 90s each, repeated twice" },
           { name: "TACFIT Sprint", code: "5(20w40r)", description: "Short burst with longer recovery" }
-        ]
-      },
-      {
-        name: "Mark Wildman / Kettlebell",
-        description: "Mark Wildman's minimalist kettlebell protocols",
-        protocols: [
-          { name: "EMOM 10 Singles", code: "10(1mw)", description: "Every minute, 10 rounds. Single kettlebell work." },
-          { name: "E90s OM", code: "10(1:30w)", description: "Every 90 seconds, 10 rounds. Heavy work with rest." },
-          { name: "Simple Intervals 7×1:1", code: "7(1mw1mr)", description: "7 rounds of 1 min work, 1 min rest" },
-          { name: "Heavy Singles 5×2:1", code: "5(2mw1mr)", description: "5 rounds of 2 min work, 1 min rest. Heavy bells." },
-          { name: "Tetris Complex", code: "4(7(1mw1mr))", description: "4 blocks of 7 rounds. Wildman's Tetris protocol." },
-          { name: "Standard 5×1:1", code: "5(1mw1mr)", description: "Standard 5 round protocol" },
-          { name: "Extended 10×1:1", code: "10(1mw1mr)", description: "Extended work capacity builder" },
-          { name: "Continuous 5min", code: "5mw", description: "Continuous work for 5 minutes" },
-          { name: "Triple Tabata", code: "3(10(30w30r))", description: "3 exercises, Tabata timing each" },
-          { name: "Long Form 10min", code: "10mw", description: "Long form continuous work" }
         ]
       },
       {
