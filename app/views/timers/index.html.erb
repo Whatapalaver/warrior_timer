@@ -109,7 +109,7 @@
 
             <!-- Visual Preview -->
             <div class="mt-4">
-              <%= render(ProtocolPreviewComponent.new(code: example[:intervals])) %>
+              <%= render(ProtocolPreview::ProtocolPreviewComponent.new(code: example[:intervals])) %>
             </div>
           <% end %>
         <% end %>
@@ -146,6 +146,33 @@
           <div><code class="text-slate-300">30w+30r</code> <span class="text-slate-400">- Chain segments with + (optional)</span></div>
           <div><code class="text-slate-300">10(30w30r)</code> <span class="text-slate-400">- Repeat 10 times</span></div>
           <div><code class="text-slate-300">3(2(30w15r)60r)</code> <span class="text-slate-400">- Nested repetitions</span></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold mb-4 text-amber-400">Named Segments</h3>
+        <p class="text-slate-400 text-sm mb-3">Add exercise names to display during the timer instead of generic "WORK" or "REST"</p>
+        <div class="space-y-3 text-sm">
+          <div>
+            <div class="mb-1"><strong class="text-slate-200">Inline naming:</strong></div>
+            <div><code class="text-slate-300">30w[Squat]</code> <span class="text-slate-400">- 30s work named "Squat"</span></div>
+            <div><code class="text-slate-300">8(20w[Burpees]10r)</code> <span class="text-slate-400">- 8 rounds, all work named "Burpees"</span></div>
+          </div>
+          <div>
+            <div class="mb-1"><strong class="text-slate-200">Circuit shorthand:</strong></div>
+            <div><code class="text-slate-300">(30w30r)*[Squat,Bench,Lunges]</code></div>
+            <div class="text-slate-400 ml-4">↳ Names applied to work segments in order</div>
+          </div>
+          <div>
+            <div class="mb-1"><strong class="text-slate-200">Full workout example:</strong></div>
+            <div><code class="text-slate-300">5mwu+3((30w30r)*[Squat,Bench,Press])+2mcd</code></div>
+            <div class="text-slate-400 ml-4">↳ Warmup, 3 sets of named circuit, cooldown</div>
+          </div>
+          <div>
+            <div class="mb-1"><strong class="text-slate-200">URL-friendly names:</strong></div>
+            <div><code class="text-slate-300">30w[Jumping-Jacks]</code> <span class="text-slate-400">- Hyphens → spaces</span></div>
+            <div><code class="text-slate-300">30w[Box_Jumps]</code> <span class="text-slate-400">- Underscores → spaces</span></div>
+          </div>
         </div>
       </div>
     </div>

@@ -52,8 +52,8 @@ export default class extends Controller {
   showPreview(segments, input) {
     this.errorTarget.classList.add('hidden')
 
-    // Show Go button
-    this.goButtonTarget.href = `/timer/${encodeURIComponent(input)}`
+    // Show Go button - don't encode, Rails routing handles it
+    this.goButtonTarget.href = `/timer/${input}`
     this.goButtonTarget.classList.remove('hidden')
 
     // Build visual preview
@@ -145,7 +145,7 @@ export default class extends Controller {
   goToTimer() {
     const input = this.inputTarget.value.trim()
     if (input) {
-      window.location.href = `/timer/${encodeURIComponent(input)}`
+      window.location.href = `/timer/${input}`
     }
   }
 }

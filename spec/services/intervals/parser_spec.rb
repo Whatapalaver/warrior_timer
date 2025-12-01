@@ -242,5 +242,96 @@ RSpec.describe Intervals::Parser do
         expect { described_class.new('10()').parse }.to raise_error(Intervals::Parser::ParseError)
       end
     end
+
+    context 'with named segments' do
+      it 'parses inline segment name' do
+        result = described_class.new('30w[Squat]').parse
+        expect(result).to eq([
+          { type: :work, duration: 30, name: 'Squat' }
+        ])
+      end
+
+      it 'parses named work and unnamed rest' do
+        result = described_class.new('30w[Squat]30r').parse
+        expect(result).to eq([
+          { type: :work, duration: 30, name: 'Squat' },
+          { type: :rest, duration: 30 }
+        ])
+      end
+
+      it 'handles names with hyphens (converts to spaces)' do
+        result = described_class.new('30w[Jumping-Jacks]').parse
+        expect(result).to eq([
+          { type: :work, duration: 30, name: 'Jumping Jacks' }
+        ])
+      end
+
+      it 'handles names with underscores (converts to spaces)' do
+        result = described_class.new('30w[Jumping_Jacks]').parse
+        expect(result).to eq([
+          { type: :work, duration: 30, name: 'Jumping Jacks' }
+        ])
+      end
+
+      it 'parses named rest segment (active rest)' do
+        result = described_class.new('30r[Jog]').parse
+        expect(result).to eq([
+          { type: :rest, duration: 30, name: 'Jog' }
+        ])
+      end
+
+      it 'parses circuit shorthand with names' do
+        result = described_class.new('(30w30r)*[A,B,C]').parse
+        expect(result.length).to eq(6)
+        expect(result[0]).to include(type: :work, duration: 30, name: 'A', repetition: true)
+        expect(result[1]).to include(type: :rest, duration: 30, repetition: true)
+        expect(result[1][:name]).to be_nil  # Rest segments don't get names
+        expect(result[2]).to include(type: :work, duration: 30, name: 'B', repetition: true)
+        expect(result[3]).to include(type: :rest, duration: 30, repetition: true)
+        expect(result[4]).to include(type: :work, duration: 30, name: 'C', repetition: true)
+        expect(result[5]).to include(type: :rest, duration: 30, repetition: true)
+      end
+
+      it 'parses circuit shorthand with repetition count' do
+        result = described_class.new('2((30w30r)*[A,B])').parse
+        expect(result.length).to eq(8)
+        # First set
+        expect(result[0]).to include(type: :work, duration: 30, name: 'A', repetition: true)
+        expect(result[1]).to include(type: :rest, duration: 30, repetition: true)
+        expect(result[2]).to include(type: :work, duration: 30, name: 'B', repetition: true)
+        expect(result[3]).to include(type: :rest, duration: 30, repetition: true)
+        # Second set
+        expect(result[4]).to include(type: :work, duration: 30, name: 'A', repetition: true)
+        expect(result[5]).to include(type: :rest, duration: 30, repetition: true)
+        expect(result[6]).to include(type: :work, duration: 30, name: 'B', repetition: true)
+        expect(result[7]).to include(type: :rest, duration: 30, repetition: true)
+      end
+
+      it 'parses complex workout with names' do
+        result = described_class.new('5mwu+3((30w30r)*[Squat,Bench,Lunges])+2mcd').parse
+        expect(result[0]).to eq({ type: :warmup, duration: 300 })
+        # First work segment should be named Squat
+        expect(result[1]).to include(type: :work, duration: 30, name: 'Squat', repetition: true)
+        expect(result[2]).to include(type: :rest, duration: 30, repetition: true)
+        expect(result[3]).to include(type: :work, duration: 30, name: 'Bench', repetition: true)
+        # Last segment should be cooldown
+        expect(result[-1]).to eq({ type: :cooldown, duration: 120 })
+      end
+
+      it 'handles Tabata with all segments named' do
+        result = described_class.new('(20w10r)*[Burpees1,Burpees2,Burpees3,Burpees4,Burpees5,Burpees6,Burpees7,Burpees8]').parse
+        expect(result.length).to eq(16)
+        # Work segments should be named Burpees1 through Burpees8
+        work_segments = result.select { |s| s[:type] == :work }
+        expect(work_segments.length).to eq(8)
+        work_segments.each_with_index do |seg, i|
+          expect(seg[:name]).to eq("Burpees#{i + 1}")
+        end
+        # Rest segments should not have names
+        result.select { |s| s[:type] == :rest }.each do |seg|
+          expect(seg[:name]).to be_nil
+        end
+      end
+    end
   end
 end

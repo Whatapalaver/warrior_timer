@@ -39,8 +39,23 @@ module Intervals
     end
 
     def parse_part(part)
+      # Check for circuit shorthand: (...))*[name1,name2,...]
+      if part =~ /^(\d+)?\((.*)\)\*\[(.*)\]$/
+        count = $1 ? $1.to_i : 1
+        inner = $2
+        names_str = $3
+
+        raise ParseError, "Empty repetition" if inner.strip.empty?
+
+        names = names_str.split(',').map { |n| decode_name(n.strip) }
+
+        # Parse the inner content
+        inner_segments = parse_inner_sequence(inner)
+
+        # Apply names to work segments
+        apply_names_to_circuit(inner_segments, names, count)
       # Check if this is a repetition: N(...) - allow empty parens to catch and error on them
-      if part =~ /^(\d+)\((.*)\)$/
+      elsif part =~ /^(\d+)\((.*)\)$/
         count = $1.to_i
         inner = $2
 
@@ -59,9 +74,9 @@ module Intervals
         result
       else
         # Could be a simple segment or concatenated segments
-        # Check if it matches a valid simple segment pattern
+        # Check if it matches a valid simple segment pattern with optional name
         # Valid segment types: w, r, wu, cd, p (1-2 chars)
-        if part =~ /^(\d+(?::\d+)?m?)(wu|cd|[wrp])$/
+        if part =~ /^(\d+(?::\d+)?m?)(wu|cd|[wrp])(\[.*?\])?$/
           # Simple segment
           [parse_segment(part)]
         else
@@ -89,8 +104,11 @@ module Intervals
       segments = []
 
       tokens.each do |token|
-        if token =~ /^\d+\(/
-          # This is a nested repetition
+        if token =~ /\)\*\[/
+          # This is a circuit shorthand pattern
+          segments.concat(parse_part(token))
+        elsif token =~ /^\d*\(/
+          # This is a nested repetition (with or without leading number)
           segments.concat(parse_part(token))
         else
           # This is a simple segment
@@ -112,22 +130,38 @@ module Intervals
           next
         end
 
-        # Check for repetition pattern: N(...)
-        if input[i] =~ /\d/ && input[i..-1] =~ /^(\d+)\(/
+        # Check for repetition pattern: N(...) or (...)
+        if input[i] == '(' || (input[i] =~ /\d/ && input[i..-1] =~ /^(\d+)\(/)
           # This is a repetition, find the matching closing paren
-          count_str = $1
-          paren_start = i + count_str.length
+          if input[i] == '('
+            count_str = ''
+            paren_start = i
+          else
+            count_str = $1
+            paren_start = i + count_str.length
+          end
           paren_end = find_matching_paren(input, paren_start)
 
           raise ParseError, "Mismatched parentheses" if paren_end.nil?
 
-          token = input[i..paren_end]
+          # Check if there's a *[...] after the parenthesis
+          next_pos = paren_end + 1
+          if next_pos < input.length && input[next_pos] == '*' && input[next_pos + 1] == '['
+            # Find the closing bracket
+            bracket_end = input.index(']', next_pos + 2)
+            raise ParseError, "Mismatched brackets" if bracket_end.nil?
+            token = input[i..bracket_end]
+            i = bracket_end + 1
+          else
+            token = input[i..paren_end]
+            i = paren_end + 1
+          end
+
           tokens << token
-          i = paren_end + 1
         elsif input[i] =~ /\d/
           # This is a simple segment - match the segment type more precisely
-          # Segment types are: w, r, wu, cd, p (at most 2 characters)
-          if input[i..-1] =~ /^(\d+(?::\d+)?m?(?:wu|cd|[wrp]))/
+          # Segment types are: w, r, wu, cd, p (at most 2 characters), optionally followed by [Name]
+          if input[i..-1] =~ /^(\d+(?::\d+)?m?(?:wu|cd|[wrp])(?:\[[^\]]+\])?)/
             tokens << $1
             i += $1.length
           else
@@ -193,21 +227,24 @@ module Intervals
     end
 
     def parse_segment(segment)
-      # Match patterns like: 30w, 5mw, 1:30w
-      match = segment.match(/^(\d+(?::\d+)?)(m?)(\w+)$/)
+      # Match patterns like: 30w, 5mw, 1:30w, 30w[Squat]
+      match = segment.match(/^(\d+(?::\d+)?)(m?)(\w+)(?:\[([^\]]+)\])?$/)
 
       raise ParseError, "Invalid segment format: #{segment}" unless match
 
       time_part = match[1]
       minutes_suffix = match[2]
       type_part = match[3]
+      name_part = match[4]
 
       type = SEGMENT_TYPES[type_part]
       raise ParseError, "Unknown segment type: #{type_part}" unless type
 
       duration = parse_duration(time_part, minutes_suffix)
 
-      { type: type, duration: duration }
+      result = { type: type, duration: duration }
+      result[:name] = decode_name(name_part) if name_part
+      result
     end
 
     def parse_duration(time_part, minutes_suffix)
@@ -226,6 +263,34 @@ module Intervals
         # Parse bare seconds
         time_part.to_i
       end
+    end
+
+    # Decode name from URL-friendly format to display format
+    # Converts hyphens and underscores to spaces
+    def decode_name(name)
+      return nil if name.nil? || name.empty?
+      name.gsub(/[-_]/, ' ')
+    end
+
+    # Apply names to work segments in a circuit pattern
+    # For example: (30w30r)*[A,B,C] creates 30w[A]30r+30w[B]30r+30w[C]30r
+    def apply_names_to_circuit(segments, names, count)
+      result = []
+
+      count.times do
+        names.each do |name|
+          segments.each do |seg|
+            new_seg = seg.merge(repetition: true)
+            # Only apply names to work segments
+            if seg[:type] == :work
+              new_seg = new_seg.merge(name: name)
+            end
+            result << new_seg
+          end
+        end
+      end
+
+      result
     end
   end
 end

@@ -1,4 +1,5 @@
-class ProtocolPreviewComponent < ViewComponent::Base
+module ProtocolPreview
+  class ProtocolPreviewComponent < ViewComponent::Base
   def initialize(code:)
     @code = code
   end
@@ -33,5 +34,6 @@ class ProtocolPreviewComponent < ViewComponent::Base
 
   def total_duration
     @total_duration ||= segments.sum { |s| s[:duration_seconds].to_i }
+  end
   end
 end

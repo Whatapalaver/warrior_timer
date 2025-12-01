@@ -197,8 +197,12 @@ export default class extends Controller {
     } else {
       const segment = this.segmentsValue[this.currentSegmentIndex]
 
-      // Update segment type
-      this.segmentTypeTarget.textContent = this.formatSegmentType(segment.segment_type)
+      // Update segment type - show name if present, otherwise show type
+      if (segment.name) {
+        this.segmentTypeTarget.textContent = segment.name.toUpperCase()
+      } else {
+        this.segmentTypeTarget.textContent = this.formatSegmentType(segment.segment_type)
+      }
 
       // Update countdown
       this.countdownTarget.textContent = this.formatTime(this.timeRemaining)

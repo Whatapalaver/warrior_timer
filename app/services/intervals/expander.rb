@@ -78,7 +78,7 @@ module Intervals
       return false if chunk1.nil? || chunk2.nil? || chunk1.length != chunk2.length
 
       chunk1.zip(chunk2).all? do |seg1, seg2|
-        seg1[:type] == seg2[:type] && seg1[:duration] == seg2[:duration]
+        seg1[:type] == seg2[:type] && seg1[:duration] == seg2[:duration] && seg1[:name] == seg2[:name]
       end
     end
 
@@ -120,7 +120,7 @@ module Intervals
           end
         end
 
-        result << {
+        expanded_segment = {
           segment_type: segment[:type],
           duration_seconds: segment[:duration],
           round_number: round_number,
@@ -128,6 +128,11 @@ module Intervals
           segment_index: index,
           total_segments: total_segments
         }
+
+        # Add name if present
+        expanded_segment[:name] = segment[:name] if segment[:name]
+
+        result << expanded_segment
       end
 
       result

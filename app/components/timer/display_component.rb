@@ -69,19 +69,30 @@ module Timer
     end
 
     def segment_label(segment)
-      type_names = {
-        prepare: 'Prep',
-        warmup: 'Warmup',
-        work: 'Work',
-        rest: 'Rest',
-        cooldown: 'Cooldown'
-      }
-      label = type_names[segment[:segment_type]] || segment[:segment_type].to_s.capitalize
+      # If segment has a name, use it instead of the type
+      if segment[:name]
+        label = segment[:name]
 
-      if segment[:round_number]
-        "#{label} - R#{segment[:round_number]}/#{segment[:total_rounds]}"
+        if segment[:round_number]
+          "#{label} - R#{segment[:round_number]}/#{segment[:total_rounds]}"
+        else
+          label
+        end
       else
-        label
+        type_names = {
+          prepare: 'Prep',
+          warmup: 'Warmup',
+          work: 'Work',
+          rest: 'Rest',
+          cooldown: 'Cooldown'
+        }
+        label = type_names[segment[:segment_type]] || segment[:segment_type].to_s.capitalize
+
+        if segment[:round_number]
+          "#{label} - R#{segment[:round_number]}/#{segment[:total_rounds]}"
+        else
+          label
+        end
       end
     end
   end
