@@ -52,8 +52,9 @@ export default class extends Controller {
   showPreview(segments, input) {
     this.errorTarget.classList.add('hidden')
 
-    // Show Go button - don't encode, Rails routing handles it
-    this.goButtonTarget.href = `/timer/${input}`
+    // Show Go button - convert spaces to hyphens for URL-friendly display
+    const urlFriendly = input.replace(/ /g, '-')
+    this.goButtonTarget.href = `/timer/${urlFriendly}`
     this.goButtonTarget.classList.remove('hidden')
 
     // Build visual preview
@@ -145,7 +146,9 @@ export default class extends Controller {
   goToTimer() {
     const input = this.inputTarget.value.trim()
     if (input) {
-      window.location.href = `/timer/${input}`
+      // Convert spaces to hyphens for URL-friendly display
+      const urlFriendly = input.replace(/ /g, '-')
+      window.location.href = `/timer/${urlFriendly}`
     }
   }
 }
