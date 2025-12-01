@@ -71,7 +71,7 @@
                         <%= render(ProtocolPreview::ProtocolPreviewComponent.new(code: protocol[:code])) %>
                       </div>
                       <div class="flex items-center gap-2">
-                        <%= link_to timer_path(protocol[:code]), class: "font-mono text-sm px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors whitespace-nowrap" do %>
+                        <%= link_to "/timer/#{protocol[:code]}", class: "font-mono text-sm px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors whitespace-nowrap" do %>
                           <%= protocol[:code] %> →
                         <% end %>
                       </div>

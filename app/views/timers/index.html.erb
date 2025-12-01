@@ -104,7 +104,7 @@
         %>
 
         <% examples.each do |example| %>
-          <%= link_to timer_path(intervals: example[:intervals]), class: "block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors" do %>
+          <%= link_to "/timer/#{example[:intervals]}", class: "block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors" do %>
             <h3 class="text-xl font-bold mb-2 <%= color_classes[example[:color]] %>"><%= example[:title] %></h3>
             <code class="text-sm text-slate-300"><%= example[:intervals] %></code>
             <p class="text-sm text-slate-400 mt-2"><%= example[:description] %></p>
