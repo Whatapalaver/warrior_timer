@@ -67,6 +67,17 @@ export default class extends Controller {
     }
   }
 
+  // Prevent keyboard events from propagating to timer controls
+  preventPropagation(event) {
+    event.stopPropagation()
+
+    // Allow Enter key to submit
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      this.confirmFavorite()
+    }
+  }
+
   // Confirm favorite with custom name
   confirmFavorite() {
     const favorites = this.getFavorites()
