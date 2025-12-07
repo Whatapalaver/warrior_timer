@@ -79,6 +79,9 @@ export default class extends Controller {
       // Start from the beginning
       this.currentSegmentIndex = 0
       this.loadSegment()
+
+      // Add to recent history on first start
+      this.dispatch('addToRecent', { target: document.querySelector('[data-controller~="workout-storage"]') })
     }
 
     this.isRunning = true

@@ -1,0 +1,50 @@
+<div
+  data-controller="workout-storage"
+  class="space-y-8"
+>
+  <!-- Favorites Section -->
+  <div>
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-bold text-amber-400">
+        ★ Favorites
+      </h3>
+      <button
+        data-action="click->workout-storage#clearFavorites"
+        class="text-xs text-slate-400 hover:text-slate-300 transition-colors"
+      >
+        Clear All
+      </button>
+    </div>
+
+    <div data-workout-storage-target="favoritesList" class="space-y-2">
+      <!-- Populated by JavaScript -->
+      <div class="text-center py-8 text-slate-400 text-sm">
+        <p>No favorites yet</p>
+        <p class="text-xs mt-1">Click the ★ icon on any timer page to save it</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Workouts Section -->
+  <div>
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-bold text-emerald-400">
+        🕐 Recent Workouts
+      </h3>
+      <button
+        data-action="click->workout-storage#clearRecents"
+        class="text-xs text-slate-400 hover:text-slate-300 transition-colors"
+      >
+        Clear All
+      </button>
+    </div>
+
+    <div data-workout-storage-target="recentsList" class="space-y-2">
+      <!-- Populated by JavaScript -->
+      <div class="text-center py-8 text-slate-400 text-sm">
+        <p>No recent workouts</p>
+        <p class="text-xs mt-1">Your recently used timers will appear here</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,8 +1,9 @@
 <div
   class="min-h-screen flex flex-col transition-colors duration-500 bg-slate-900 text-white"
-  data-controller="timer"
+  data-controller="timer workout-storage"
   data-timer-segments-value="<%= segments_json %>"
   data-timer-audio-outlet="#audio-controller"
+  data-workout-storage-intervals-value="<%= @intervals_param %>"
 >
   <!-- Audio controller -->
   <div id="audio-controller" data-controller="audio"></div>
@@ -14,14 +15,25 @@
         ← Home
       <% end %>
 
-      <div data-controller="clipboard">
+      <div class="flex gap-2">
         <button
-          data-clipboard-target="button"
-          data-action="click->clipboard#copy"
-          class="px-4 py-2 bg-slate-800 text-white border-2 border-slate-700 hover:bg-slate-700 hover:border-slate-600 rounded-lg text-sm font-semibold transition-colors"
+          data-workout-storage-target="favoriteButton"
+          data-action="click->workout-storage#toggleFavorite"
+          class="px-4 py-2 bg-slate-800 text-slate-400 border-2 border-slate-700 hover:bg-slate-700 hover:border-slate-600 rounded-lg text-sm font-semibold transition-colors"
+          title="Add to favorites"
         >
-          📋 Copy Link
+          <span data-workout-storage-target="favoriteIcon">☆</span> Favorite
         </button>
+
+        <div data-controller="clipboard">
+          <button
+            data-clipboard-target="button"
+            data-action="click->clipboard#copy"
+            class="px-4 py-2 bg-slate-800 text-white border-2 border-slate-700 hover:bg-slate-700 hover:border-slate-600 rounded-lg text-sm font-semibold transition-colors"
+          >
+            📋 Copy Link
+          </button>
+        </div>
       </div>
     </div>
   </div>
