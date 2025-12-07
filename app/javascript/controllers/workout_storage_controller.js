@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Manages workout favorites and recent history using localStorage
 export default class extends Controller {
-  static targets = ["favoriteButton", "favoriteIcon", "favoritesList", "recentsList"]
+  static targets = ["favoriteButton", "favoriteIcon", "favoritesList", "recentsList", "modal", "modalContent", "nameInput"]
   static values = {
     intervals: String,
     name: String
@@ -30,32 +30,71 @@ export default class extends Controller {
     })
   }
 
-  // Toggle favorite status
-  toggleFavorite() {
-    const favorites = this.getFavorites()
+  // Show modal for adding favorite
+  showFavoriteModal() {
     const intervalCode = this.intervalsValue
 
     if (this.isFavorite(intervalCode)) {
-      // Remove from favorites
-      const filtered = favorites.filter(f => f.code !== intervalCode)
-      this.saveFavorites(filtered)
+      // If already favorited, remove it
+      this.removeFavoriteByInterval(intervalCode)
     } else {
-      // Add to favorites with optional custom name
-      const name = this.hasNameValue ? this.nameValue : this.detectWorkoutName(intervalCode)
-      favorites.unshift({
-        code: intervalCode,
-        name: name,
-        addedAt: new Date().toISOString()
-      })
-
-      // Limit to 50 favorites
-      if (favorites.length > 50) {
-        favorites.pop()
+      // Show modal to add
+      if (this.hasModalTarget) {
+        // Pre-fill with detected name
+        if (this.hasNameInputTarget) {
+          this.nameInputTarget.value = this.detectWorkoutName(intervalCode)
+          this.nameInputTarget.select()
+        }
+        this.modalTarget.classList.remove('hidden')
       }
+    }
+  }
 
-      this.saveFavorites(favorites)
+  // Close modal
+  closeModal() {
+    if (this.hasModalTarget) {
+      this.modalTarget.classList.add('hidden')
+      if (this.hasNameInputTarget) {
+        this.nameInputTarget.value = ''
+      }
+    }
+  }
+
+  // Close modal when clicking backdrop
+  closeModalOnBackdrop(event) {
+    if (event.target === this.modalTarget) {
+      this.closeModal()
+    }
+  }
+
+  // Confirm favorite with custom name
+  confirmFavorite() {
+    const favorites = this.getFavorites()
+    const intervalCode = this.intervalsValue
+    const customName = this.hasNameInputTarget ? this.nameInputTarget.value.trim() : ''
+    const name = customName || this.detectWorkoutName(intervalCode)
+
+    favorites.unshift({
+      code: intervalCode,
+      name: name,
+      addedAt: new Date().toISOString()
+    })
+
+    // Limit to 50 favorites
+    if (favorites.length > 50) {
+      favorites.pop()
     }
 
+    this.saveFavorites(favorites)
+    this.updateFavoriteButton()
+    this.renderFavorites()
+    this.closeModal()
+  }
+
+  // Remove favorite by interval code
+  removeFavoriteByInterval(intervalCode) {
+    const favorites = this.getFavorites().filter(f => f.code !== intervalCode)
+    this.saveFavorites(favorites)
     this.updateFavoriteButton()
     this.renderFavorites()
   }
@@ -213,31 +252,32 @@ export default class extends Controller {
 
     if (favorites.length === 0) {
       this.favoritesListTarget.innerHTML = `
-        <div class="text-center py-8 text-slate-400 text-sm">
-          <p>No favorites yet</p>
-          <p class="text-xs mt-1">Click the ★ icon on any timer page to save it</p>
+        <div class="col-span-2 text-center py-12 text-slate-400 text-sm">
+          <p class="text-lg">No favorites yet</p>
+          <p class="text-xs mt-2">Click the ★ button on any timer page to save it</p>
         </div>
       `
       return
     }
 
     this.favoritesListTarget.innerHTML = favorites.map(fav => `
-      <div class="bg-slate-800 rounded-lg p-3 hover:bg-slate-700 transition-colors group">
-        <div class="flex items-start gap-3">
-          <a href="/timer/${this.escapeHtml(fav.code)}" class="flex-1 min-w-0">
-            <div class="font-semibold text-white mb-1 truncate">${this.escapeHtml(fav.name)}</div>
-            <code class="text-xs text-slate-400 break-all">${this.escapeHtml(fav.code)}</code>
-          </a>
+      <a href="/timer/${this.escapeHtml(fav.code)}" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group relative">
+        <div class="flex items-start justify-between mb-2">
+          <h3 class="text-xl font-bold text-amber-400">${this.escapeHtml(fav.name)}</h3>
           <button
             data-action="click->workout-storage#removeFavoriteByCode"
             data-code="${this.escapeHtml(fav.code)}"
+            onclick="event.preventDefault(); event.stopPropagation();"
             class="text-slate-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
             title="Remove favorite"
           >
             ✕
           </button>
         </div>
-      </div>
+        <code class="text-sm text-slate-300 block mb-2">${this.escapeHtml(fav.code)}</code>
+        <div class="text-xs text-slate-500 mb-4">Added ${this.formatTimeAgo(fav.addedAt)}</div>
+        <div class="preview-placeholder bg-slate-700 h-6 rounded"></div>
+      </a>
     `).join('')
   }
 
@@ -249,32 +289,32 @@ export default class extends Controller {
 
     if (recents.length === 0) {
       this.recentsListTarget.innerHTML = `
-        <div class="text-center py-8 text-slate-400 text-sm">
-          <p>No recent workouts</p>
-          <p class="text-xs mt-1">Your recently used timers will appear here</p>
+        <div class="col-span-2 text-center py-12 text-slate-400 text-sm">
+          <p class="text-lg">No recent workouts</p>
+          <p class="text-xs mt-2">Your recently used timers will appear here</p>
         </div>
       `
       return
     }
 
     this.recentsListTarget.innerHTML = recents.map(rec => `
-      <div class="bg-slate-800 rounded-lg p-3 hover:bg-slate-700 transition-colors group">
-        <div class="flex items-start gap-3">
-          <a href="/timer/${this.escapeHtml(rec.code)}" class="flex-1 min-w-0">
-            <div class="font-semibold text-white mb-1 truncate">${this.escapeHtml(rec.name)}</div>
-            <code class="text-xs text-slate-400 break-all">${this.escapeHtml(rec.code)}</code>
-            <div class="text-xs text-slate-500 mt-1">${this.formatTimeAgo(rec.usedAt)}</div>
-          </a>
+      <a href="/timer/${this.escapeHtml(rec.code)}" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group relative">
+        <div class="flex items-start justify-between mb-2">
+          <h3 class="text-xl font-bold text-emerald-400">${this.escapeHtml(rec.name)}</h3>
           <button
             data-action="click->workout-storage#removeRecentByCode"
             data-code="${this.escapeHtml(rec.code)}"
+            onclick="event.preventDefault(); event.stopPropagation();"
             class="text-slate-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
             title="Remove from recents"
           >
             ✕
           </button>
         </div>
-      </div>
+        <code class="text-sm text-slate-300 block mb-2">${this.escapeHtml(rec.code)}</code>
+        <div class="text-xs text-slate-500 mb-4">Used ${this.formatTimeAgo(rec.usedAt)}</div>
+        <div class="preview-placeholder bg-slate-700 h-6 rounded"></div>
+      </a>
     `).join('')
   }
 

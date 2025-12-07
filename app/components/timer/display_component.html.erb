@@ -18,7 +18,7 @@
       <div class="flex gap-2">
         <button
           data-workout-storage-target="favoriteButton"
-          data-action="click->workout-storage#toggleFavorite"
+          data-action="click->workout-storage#showFavoriteModal"
           class="px-4 py-2 bg-slate-800 text-slate-400 border-2 border-slate-700 hover:bg-slate-700 hover:border-slate-600 rounded-lg text-sm font-semibold transition-colors"
           title="Add to favorites"
         >
@@ -119,4 +119,41 @@
 
   <!-- Workout Overview Sidebar (desktop only) -->
   <%= render Workout::OverviewComponent.new(segments: @segments) %>
+
+  <!-- Favorite Modal -->
+  <div
+    data-workout-storage-target="modal"
+    class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+    data-action="click->workout-storage#closeModalOnBackdrop"
+  >
+    <div class="bg-slate-800 rounded-lg p-6 max-w-md w-full" data-workout-storage-target="modalContent">
+      <h3 class="text-xl font-bold mb-4 text-white">Add to Favorites</h3>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-2 text-slate-300">Workout Name (optional)</label>
+        <input
+          type="text"
+          data-workout-storage-target="nameInput"
+          placeholder="e.g., Morning HIIT, Leg Day"
+          class="w-full px-4 py-2 bg-slate-700 text-white rounded-lg border-2 border-slate-600 focus:border-amber-500 focus:outline-none"
+        />
+        <p class="text-xs text-slate-400 mt-1">Leave blank to auto-detect workout type</p>
+      </div>
+
+      <div class="flex gap-3">
+        <button
+          data-action="click->workout-storage#confirmFavorite"
+          class="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-lg transition-colors"
+        >
+          Save Favorite
+        </button>
+        <button
+          data-action="click->workout-storage#closeModal"
+          class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
