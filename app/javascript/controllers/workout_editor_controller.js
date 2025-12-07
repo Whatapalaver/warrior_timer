@@ -35,6 +35,11 @@ export default class extends Controller {
     window.location.href = `/timer/${newIntervals}`
   }
 
+  // Prevent keyboard events from propagating to timer controls
+  preventPropagation(event) {
+    event.stopPropagation()
+  }
+
   // Allow Enter to apply, Escape to cancel
   connect() {
     this.inputTarget.addEventListener('keydown', (event) => {

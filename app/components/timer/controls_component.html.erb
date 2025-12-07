@@ -63,6 +63,7 @@
         <input
           type="text"
           data-workout-editor-target="input"
+          data-action="keydown->workout-editor#preventPropagation"
           value="<%= @intervals_param %>"
           class="w-full px-3 py-2 bg-slate-700 text-white rounded text-sm font-mono border-2 border-slate-600 focus:border-emerald-500 focus:outline-none mb-2"
           placeholder="e.g., 10(30w30r)"
