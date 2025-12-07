@@ -61,14 +61,14 @@
 - [ ] Custom sound selection (different beep tones)
 
 ### Workout Management
-- [ ] Browser localStorage for saving favorite workouts
-- [ ] Recent workouts list
+- [x] Browser localStorage for saving favorite workouts
+- [x] Recent workouts list
 - [ ] Share button (copy URL to clipboard)
 - [ ] QR code generator for sharing
 - [ ] Export workout as image or PDF
 
 ### Timer Features
-- [ ] Skip to next segment button
+- [x] Skip to next segment button
 - [ ] Skip back to previous segment button
 - [ ] Add extra rest time during workout
 - [ ] Pause between rounds option
@@ -76,7 +76,7 @@
 
 ### Protocol Library Enhancements
 - [ ] Search/filter protocols by name or category
-- [ ] "Favorites" using localStorage
+- [x] "Favorites" using localStorage
 - [ ] User-submitted protocols (moderated GitHub PRs)
 - [ ] Difficulty ratings
 - [ ] Estimated calorie burn
