@@ -1,9 +1,10 @@
 <div
   class="min-h-screen flex flex-col transition-colors duration-500 bg-slate-900 text-white"
-  data-controller="timer workout-storage"
+  data-controller="timer workout-storage share"
   data-timer-segments-value="<%= segments_json %>"
   data-timer-audio-outlet="#audio-controller"
   data-workout-storage-intervals-value="<%= @intervals_param %>"
+  data-share-code-value="<%= @intervals_param %>"
 >
   <!-- Audio controller -->
   <div id="audio-controller" data-controller="audio"></div>
@@ -25,15 +26,12 @@
           <span data-workout-storage-target="favoriteIcon">☆</span> Favorite
         </button>
 
-        <div data-controller="clipboard">
-          <button
-            data-clipboard-target="button"
-            data-action="click->clipboard#copy"
-            class="px-4 py-2 bg-slate-800 text-white border-2 border-slate-700 hover:bg-slate-700 hover:border-slate-600 rounded-lg text-sm font-semibold transition-colors"
-          >
-            📋 Copy Link
-          </button>
-        </div>
+        <button
+          data-action="click->share#showModal"
+          class="px-4 py-2 bg-slate-800 text-white border-2 border-slate-700 hover:bg-slate-700 hover:border-slate-600 rounded-lg text-sm font-semibold transition-colors"
+        >
+          🔗 Share
+        </button>
       </div>
     </div>
   </div>
@@ -153,6 +151,77 @@
           class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg transition-colors"
         >
           Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share Modal -->
+  <div
+    data-share-target="modal"
+    class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+    data-action="click->share#closeModalOnBackdrop"
+  >
+    <div class="bg-slate-800 rounded-lg p-6 max-w-2xl w-full" data-share-target="modalContent">
+      <h3 class="text-xl font-bold mb-4 text-white">Share This Timer</h3>
+
+      <!-- Direct Link -->
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-2 text-slate-300">Direct Link</label>
+        <div class="flex gap-2">
+          <input
+            type="text"
+            data-share-target="directLink"
+            readonly
+            class="flex-1 px-4 py-2 bg-slate-700 text-white rounded-lg border-2 border-slate-600 font-mono text-sm"
+          />
+          <button
+            data-action="click->share#copyDirectLink"
+            class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors whitespace-nowrap"
+          >
+            📋 Copy
+          </button>
+        </div>
+      </div>
+
+      <!-- Embed Code -->
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-2 text-slate-300">Embed Code (iframe)</label>
+        <div class="flex gap-2">
+          <textarea
+            data-share-target="embedCode"
+            readonly
+            rows="3"
+            class="flex-1 px-4 py-2 bg-slate-700 text-white rounded-lg border-2 border-slate-600 font-mono text-xs resize-none"
+          ></textarea>
+          <button
+            data-action="click->share#copyEmbedCode"
+            class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors whitespace-nowrap self-start"
+          >
+            📋 Copy
+          </button>
+        </div>
+        <p class="text-xs text-slate-400 mt-2">Use this code to embed the timer on your website</p>
+      </div>
+
+      <!-- Embed Preview Link -->
+      <div class="mb-6">
+        <a
+          data-share-target="embedPreview"
+          href="#"
+          target="_blank"
+          class="text-sm text-amber-400 hover:text-amber-300 transition-colors"
+        >
+          Preview embed →
+        </a>
+      </div>
+
+      <div class="flex justify-end">
+        <button
+          data-action="click->share#closeModal"
+          class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg transition-colors"
+        >
+          Close
         </button>
       </div>
     </div>

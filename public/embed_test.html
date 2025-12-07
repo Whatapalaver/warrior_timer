@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Embed Test - Warrior Timer</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #1e293b;
+      color: white;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .embed-container {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    iframe {
+      border: 2px solid #334155;
+      border-radius: 8px;
+      display: block;
+    }
+    .description {
+      color: #94a3b8;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 Warrior Timer Embed Test Page</h1>
+    <p style="color: #94a3b8; margin-bottom: 30px;">
+      This page tests the embedded timer functionality. All timers should work independently.
+    </p>
+
+    <div class="embed-container">
+      <h2>Tabata Timer (8 rounds of 20s work / 10s rest)</h2>
+      <iframe
+        src="/embed/8(20w10r)"
+        width="100%"
+        height="400"
+        frameborder="0"
+        allow="autoplay">
+      </iframe>
+      <p class="description">Classic Tabata protocol</p>
+    </div>
+
+    <div class="embed-container">
+      <h2>30/30 Intervals (10 rounds)</h2>
+      <iframe
+        src="/embed/10(30w30r)"
+        width="100%"
+        height="400"
+        frameborder="0"
+        allow="autoplay">
+      </iframe>
+      <p class="description">10 rounds of 30 seconds work / 30 seconds rest</p>
+    </div>
+
+    <div class="embed-container">
+      <h2>EMOM 15 (Every Minute On the Minute)</h2>
+      <iframe
+        src="/embed/15(1mw)"
+        width="100%"
+        height="400"
+        frameborder="0"
+        allow="autoplay">
+      </iframe>
+      <p class="description">15 rounds of 1 minute work</p>
+    </div>
+
+    <div class="embed-container">
+      <h2>Compact Size Test (400x300)</h2>
+      <iframe
+        src="/embed/8(20w10r)"
+        width="400"
+        height="300"
+        frameborder="0"
+        allow="autoplay">
+      </iframe>
+      <p class="description">Testing minimum recommended size</p>
+    </div>
+
+    <div class="embed-container">
+      <h2>Error Handling Test (Invalid Code)</h2>
+      <iframe
+        src="/embed/invalid_code"
+        width="100%"
+        height="400"
+        frameborder="0"
+        allow="autoplay">
+      </iframe>
+      <p class="description">Should show error message gracefully</p>
+    </div>
+  </div>
+</body>
+</html>

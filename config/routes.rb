@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   root "timers#index"
   get "protocols", to: "protocols#index", as: :protocols
   get "timer/:intervals", to: "timers#show", as: :timer, constraints: { intervals: /[^\/]+/ }
+  get "embed/:code", to: "embeds#show", as: :embed_timer, constraints: { code: /[^\/]+/ }
 
   # API routes
   namespace :api do
