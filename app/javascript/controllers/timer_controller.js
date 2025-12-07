@@ -243,15 +243,15 @@ export default class extends Controller {
     if (this.hasMobileSegmentTarget) {
       this.mobileSegmentTargets.forEach((segment, i) => {
         if (i === this.currentSegmentIndex) {
-          segment.classList.remove('opacity-50')
-          segment.classList.add('opacity-100', 'ring-2', 'ring-white')
+          segment.classList.remove('opacity-60', 'opacity-40', 'border-transparent')
+          segment.classList.add('opacity-100', 'border-white')
           segment.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
         } else if (i < this.currentSegmentIndex) {
-          segment.classList.add('opacity-30')
-          segment.classList.remove('opacity-50', 'opacity-100', 'ring-2', 'ring-white')
+          segment.classList.remove('opacity-60', 'opacity-100', 'border-white')
+          segment.classList.add('opacity-40', 'border-transparent')
         } else {
-          segment.classList.add('opacity-50')
-          segment.classList.remove('opacity-30', 'opacity-100', 'ring-2', 'ring-white')
+          segment.classList.remove('opacity-40', 'opacity-100', 'border-white')
+          segment.classList.add('opacity-60', 'border-transparent')
         }
       })
     }

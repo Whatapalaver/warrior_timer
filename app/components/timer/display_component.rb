@@ -49,11 +49,11 @@ module Timer
 
     def mobile_segment_color_class(segment_type)
       colors = {
-        prepare: 'bg-amber-500/30 text-amber-200 border-amber-500/50',
-        warmup: 'bg-orange-500/30 text-orange-200 border-orange-500/50',
-        work: 'bg-red-500/30 text-red-200 border-red-500/50',
-        rest: 'bg-emerald-500/30 text-emerald-200 border-emerald-500/50',
-        cooldown: 'bg-sky-500/30 text-sky-200 border-sky-500/50'
+        prepare: 'bg-amber-600 text-amber-100',
+        warmup: 'bg-orange-600 text-orange-100',
+        work: 'bg-red-600 text-red-100',
+        rest: 'bg-emerald-600 text-emerald-100',
+        cooldown: 'bg-sky-600 text-sky-100'
       }
       colors[segment_type] || colors[:work]
     end

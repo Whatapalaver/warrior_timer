@@ -83,10 +83,10 @@
           </div>
 
           <!-- Compact segment list -->
-          <div class="space-y-1.5 max-h-40 overflow-y-auto">
+          <div class="space-y-1.5 max-h-40 overflow-y-auto px-1">
             <% @segments.each_with_index do |segment, index| %>
               <div
-                class="flex items-center gap-2 text-xs p-2 rounded <%= mobile_segment_color_class(segment[:segment_type]) %> opacity-50 border border-transparent"
+                class="flex items-center gap-2 text-xs p-2 rounded <%= mobile_segment_color_class(segment[:segment_type]) %> opacity-60 border-2 border-transparent"
                 data-timer-target="mobileSegment"
                 data-segment-index="<%= index %>"
               >
