@@ -24,6 +24,17 @@
     </button>
   </div>
 
+  <!-- Workout Preview (hidden when running) -->
+  <div
+    data-timer-target="setupControls"
+    class="transition-opacity duration-300"
+  >
+    <div class="bg-slate-800 rounded-lg p-4 border-2 border-slate-700">
+      <label class="text-sm font-semibold mb-2 block">Workout Preview:</label>
+      <%= render(ProtocolPreview::ProtocolPreviewComponent.new(code: @intervals_param)) %>
+    </div>
+  </div>
+
   <!-- Link to Full Version -->
   <div class="text-center">
     <a
