@@ -32,7 +32,7 @@
 
       <!-- Round info -->
       <div
-        class="text-center mb-8 text-xl md:text-2xl lg:text-3xl opacity-75"
+        class="text-center mb-8 text-xl md:text-2xl lg:text-3xl text-white font-semibold"
         data-timer-target="roundInfo"
       >
       </div>
@@ -41,8 +41,8 @@
       <%= render Timer::EmbedControlsComponent.new(intervals_param: @intervals_param) %>
 
       <!-- Progress -->
-      <div class="mt-8 text-center opacity-75">
-        <p class="text-lg" data-timer-target="progress">
+      <div class="mt-8 text-center">
+        <p class="text-lg text-white font-semibold" data-timer-target="progress">
           Segment 0 of <%= @segments.length %>
         </p>
       </div>
