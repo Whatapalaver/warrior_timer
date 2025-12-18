@@ -32,6 +32,7 @@ export default class extends Controller {
     this.metronomeEnabled = false
     this.metronomeBpm = 60
     this.metronomeIntervalId = null
+    this.wakeLock = null
 
     if (this.hasSegmentsValue && this.segmentsValue.length > 0) {
       this.updateDisplay()
@@ -50,6 +51,7 @@ export default class extends Controller {
   disconnect() {
     this.stop()
     this.stopMetronome()
+    this.releaseWakeLock()
     document.removeEventListener('keydown', this.handleKeydown)
   }
 
@@ -90,6 +92,9 @@ export default class extends Controller {
     // Hide setup controls and nav buttons when running
     this.hideSetupUI()
 
+    // Keep screen awake during workout
+    this.requestWakeLock()
+
     // Start the countdown
     this.intervalId = setInterval(() => {
       this.tick()
@@ -104,6 +109,7 @@ export default class extends Controller {
     this.startPauseButtonTarget.textContent = "Resume"
     this.stop()
     this.stopMetronome()
+    this.releaseWakeLock()
   }
 
   stop() {
@@ -115,6 +121,8 @@ export default class extends Controller {
 
   reset() {
     this.stop()
+    this.stopMetronome()
+    this.releaseWakeLock()
     this.currentSegmentIndex = -1
     this.timeRemaining = 0
     this.isRunning = false
@@ -176,6 +184,7 @@ export default class extends Controller {
   complete() {
     this.stop()
     this.stopMetronome()
+    this.releaseWakeLock()
     this.isRunning = false
     this.segmentTypeTarget.textContent = "Complete!"
     this.countdownTarget.textContent = "00:00"
@@ -426,6 +435,34 @@ export default class extends Controller {
     // Hide mobile progress
     if (this.hasMobileProgressTarget) {
       this.mobileProgressTarget.classList.add('hidden')
+    }
+  }
+
+  // Wake Lock API - keeps screen awake during workouts
+  async requestWakeLock() {
+    try {
+      if ('wakeLock' in navigator) {
+        this.wakeLock = await navigator.wakeLock.request('screen')
+        console.log('Wake Lock acquired')
+
+        // Re-acquire wake lock if visibility changes (e.g., tab switching)
+        this.wakeLock.addEventListener('release', () => {
+          console.log('Wake Lock released')
+        })
+      }
+    } catch (err) {
+      console.error('Wake Lock error:', err)
+    }
+  }
+
+  async releaseWakeLock() {
+    if (this.wakeLock) {
+      try {
+        await this.wakeLock.release()
+        this.wakeLock = null
+      } catch (err) {
+        console.error('Wake Lock release error:', err)
+      }
     }
   }
 }
