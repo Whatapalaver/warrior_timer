@@ -31,8 +31,28 @@ export default class extends Controller {
       return
     }
 
-    // Navigate to the new timer URL - don't encode
-    window.location.href = `/timer/${newIntervals}`
+    // Preserve metronome settings if they exist
+    let url = `/timer/${newIntervals}`
+    const urlParams = new URLSearchParams()
+
+    // Check if metronome is enabled
+    const metronomeToggle = document.querySelector('[data-timer-target="metronomeToggle"]')
+    const metronomeBpm = document.querySelector('[data-timer-target="metronomeBpm"]')
+
+    if (metronomeToggle && metronomeToggle.checked) {
+      urlParams.set('metronome', 'true')
+      if (metronomeBpm && metronomeBpm.value) {
+        urlParams.set('bpm', metronomeBpm.value)
+      }
+    }
+
+    const queryString = urlParams.toString()
+    if (queryString) {
+      url += `?${queryString}`
+    }
+
+    // Navigate to the new timer URL
+    window.location.href = url
   }
 
   // Prevent keyboard events from propagating to timer controls

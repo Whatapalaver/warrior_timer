@@ -85,11 +85,23 @@ export default class extends Controller {
     const customName = this.hasNameInputTarget ? this.nameInputTarget.value.trim() : ''
     const name = customName || this.detectWorkoutName(intervalCode)
 
-    favorites.unshift({
+    // Get current metronome settings
+    const metronomeToggle = document.querySelector('[data-timer-target="metronomeToggle"]')
+    const metronomeBpm = document.querySelector('[data-timer-target="metronomeBpm"]')
+
+    const favorite = {
       code: intervalCode,
       name: name,
       addedAt: new Date().toISOString()
-    })
+    }
+
+    // Add metronome settings if enabled
+    if (metronomeToggle && metronomeToggle.checked) {
+      favorite.metronome = true
+      favorite.bpm = metronomeBpm ? parseInt(metronomeBpm.value) : 60
+    }
+
+    favorites.unshift(favorite)
 
     // Limit to 50 favorites
     if (favorites.length > 50) {
@@ -120,11 +132,24 @@ export default class extends Controller {
 
     // Add to front
     const name = this.hasNameValue ? this.nameValue : this.detectWorkoutName(intervalCode)
-    filtered.unshift({
+
+    // Get current metronome settings
+    const metronomeToggle = document.querySelector('[data-timer-target="metronomeToggle"]')
+    const metronomeBpm = document.querySelector('[data-timer-target="metronomeBpm"]')
+
+    const recent = {
       code: intervalCode,
       name: name,
       usedAt: new Date().toISOString()
-    })
+    }
+
+    // Add metronome settings if enabled
+    if (metronomeToggle && metronomeToggle.checked) {
+      recent.metronome = true
+      recent.bpm = metronomeBpm ? parseInt(metronomeBpm.value) : 60
+    }
+
+    filtered.unshift(recent)
 
     // Limit to 20 recent workouts
     if (filtered.length > 20) {
@@ -271,25 +296,33 @@ export default class extends Controller {
       return
     }
 
-    this.favoritesListTarget.innerHTML = favorites.map(fav => `
-      <a href="/timer/${this.escapeHtml(fav.code)}" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group relative">
-        <div class="flex items-start justify-between mb-2">
-          <h3 class="text-xl font-bold text-amber-400">${this.escapeHtml(fav.name)}</h3>
-          <button
-            data-action="click->workout-storage#removeFavoriteByCode"
-            data-code="${this.escapeHtml(fav.code)}"
-            onclick="event.preventDefault(); event.stopPropagation();"
-            class="text-slate-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
-            title="Remove favorite"
-          >
-            ✕
-          </button>
-        </div>
-        <code class="text-sm text-slate-300 block mb-2">${this.escapeHtml(fav.code)}</code>
-        <div class="text-xs text-slate-500 mb-4">Added ${this.formatTimeAgo(fav.addedAt)}</div>
-        <div class="preview-placeholder bg-slate-700 h-6 rounded"></div>
-      </a>
-    `).join('')
+    this.favoritesListTarget.innerHTML = favorites.map(fav => {
+      let url = `/timer/${this.escapeHtml(fav.code)}`
+      if (fav.metronome) {
+        url += `?metronome=true&bpm=${fav.bpm || 60}`
+      }
+
+      return `
+        <a href="${url}" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group relative">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="text-xl font-bold text-amber-400">${this.escapeHtml(fav.name)}</h3>
+            <button
+              data-action="click->workout-storage#removeFavoriteByCode"
+              data-code="${this.escapeHtml(fav.code)}"
+              onclick="event.preventDefault(); event.stopPropagation();"
+              class="text-slate-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+              title="Remove favorite"
+            >
+              ✕
+            </button>
+          </div>
+          <code class="text-sm text-slate-300 block mb-2">${this.escapeHtml(fav.code)}</code>
+          ${fav.metronome ? `<div class="text-xs text-emerald-400 mb-2">♪ ${fav.bpm} BPM</div>` : ''}
+          <div class="text-xs text-slate-500 mb-4">Added ${this.formatTimeAgo(fav.addedAt)}</div>
+          <div class="preview-placeholder bg-slate-700 h-6 rounded"></div>
+        </a>
+      `
+    }).join('')
   }
 
   // Render recents list
@@ -308,25 +341,33 @@ export default class extends Controller {
       return
     }
 
-    this.recentsListTarget.innerHTML = recents.map(rec => `
-      <a href="/timer/${this.escapeHtml(rec.code)}" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group relative">
-        <div class="flex items-start justify-between mb-2">
-          <h3 class="text-xl font-bold text-emerald-400">${this.escapeHtml(rec.name)}</h3>
-          <button
-            data-action="click->workout-storage#removeRecentByCode"
-            data-code="${this.escapeHtml(rec.code)}"
-            onclick="event.preventDefault(); event.stopPropagation();"
-            class="text-slate-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
-            title="Remove from recents"
-          >
-            ✕
-          </button>
-        </div>
-        <code class="text-sm text-slate-300 block mb-2">${this.escapeHtml(rec.code)}</code>
-        <div class="text-xs text-slate-500 mb-4">Used ${this.formatTimeAgo(rec.usedAt)}</div>
-        <div class="preview-placeholder bg-slate-700 h-6 rounded"></div>
-      </a>
-    `).join('')
+    this.recentsListTarget.innerHTML = recents.map(rec => {
+      let url = `/timer/${this.escapeHtml(rec.code)}`
+      if (rec.metronome) {
+        url += `?metronome=true&bpm=${rec.bpm || 60}`
+      }
+
+      return `
+        <a href="${url}" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group relative">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="text-xl font-bold text-emerald-400">${this.escapeHtml(rec.name)}</h3>
+            <button
+              data-action="click->workout-storage#removeRecentByCode"
+              data-code="${this.escapeHtml(rec.code)}"
+              onclick="event.preventDefault(); event.stopPropagation();"
+              class="text-slate-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+              title="Remove from recents"
+            >
+              ✕
+            </button>
+          </div>
+          <code class="text-sm text-slate-300 block mb-2">${this.escapeHtml(rec.code)}</code>
+          ${rec.metronome ? `<div class="text-xs text-emerald-400 mb-2">♪ ${rec.bpm} BPM</div>` : ''}
+          <div class="text-xs text-slate-500 mb-4">Used ${this.formatTimeAgo(rec.usedAt)}</div>
+          <div class="preview-placeholder bg-slate-700 h-6 rounded"></div>
+        </a>
+      `
+    }).join('')
   }
 
   // Remove favorite by code (called from rendered button)

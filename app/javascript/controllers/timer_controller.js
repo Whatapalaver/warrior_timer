@@ -42,10 +42,8 @@ export default class extends Controller {
     this.handleKeydown = this.handleKeydown.bind(this)
     document.addEventListener('keydown', this.handleKeydown)
 
-    // Initialize metronome BPM from input if present
-    if (this.hasMetronomeBpmTarget) {
-      this.metronomeBpm = parseInt(this.metronomeBpmTarget.value)
-    }
+    // Initialize metronome settings from URL params or defaults
+    this.initializeMetronomeFromURL()
   }
 
   disconnect() {
@@ -337,6 +335,24 @@ export default class extends Controller {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+  }
+
+  // Initialize metronome from URL parameters
+  initializeMetronomeFromURL() {
+    const urlParams = new URLSearchParams(window.location.search)
+    const metronomeEnabled = urlParams.get('metronome') === 'true'
+    const bpm = urlParams.get('bpm')
+
+    if (this.hasMetronomeBpmTarget) {
+      const bpmValue = bpm ? parseInt(bpm) : 60
+      this.metronomeBpm = bpmValue
+      this.metronomeBpmTarget.value = bpmValue
+    }
+
+    if (this.hasMetronomeToggleTarget) {
+      this.metronomeToggleTarget.checked = metronomeEnabled
+      this.metronomeEnabled = metronomeEnabled
+    }
   }
 
   // Metronome controls

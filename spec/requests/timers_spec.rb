@@ -33,5 +33,29 @@ RSpec.describe "Timers", type: :request do
       get timer_path(intervals: "10(30w+30r)")
       expect(response).to have_http_status(:success)
     end
+
+    context "with metronome query parameters" do
+      it "accepts metronome=true parameter" do
+        get timer_path(intervals: "8(20w10r)", metronome: "true")
+        expect(response).to have_http_status(:success)
+      end
+
+      it "accepts bpm parameter" do
+        get timer_path(intervals: "8(20w10r)", metronome: "true", bpm: "120")
+        expect(response).to have_http_status(:success)
+      end
+
+      it "renders successfully with only bpm parameter (without metronome)" do
+        get timer_path(intervals: "8(20w10r)", bpm: "140")
+        expect(response).to have_http_status(:success)
+      end
+
+      it "handles various BPM values" do
+        [60, 100, 150, 180].each do |bpm|
+          get timer_path(intervals: "8(20w10r)", metronome: "true", bpm: bpm)
+          expect(response).to have_http_status(:success)
+        end
+      end
+    end
   end
 end
