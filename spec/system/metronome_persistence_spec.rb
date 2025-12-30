@@ -100,13 +100,11 @@ RSpec.describe "Metronome Persistence", type: :system, js: true do
   end
 
   describe "favoriting workout with metronome" do
-    before do
-      # Clear localStorage before each test
-      page.execute_script("localStorage.clear()")
-    end
-
     it "stores metronome settings when favoriting a workout" do
       visit timer_path(intervals: "8(20w10r)", metronome: "true", bpm: "130")
+
+      # Clear localStorage after visiting page
+      page.execute_script("localStorage.clear()")
 
       # Open favorite modal
       find('[data-action*="workout-storage#showFavoriteModal"]').click
@@ -126,6 +124,9 @@ RSpec.describe "Metronome Persistence", type: :system, js: true do
     it "does not store metronome settings when metronome is disabled" do
       visit timer_path(intervals: "8(20w10r)")
 
+      # Clear localStorage after visiting page
+      page.execute_script("localStorage.clear()")
+
       # Open favorite modal
       find('[data-action*="workout-storage#showFavoriteModal"]').click
 
@@ -142,8 +143,10 @@ RSpec.describe "Metronome Persistence", type: :system, js: true do
   end
 
   describe "loading favorited workout with metronome" do
-    before do
-      # Clear localStorage and set up a favorite with metronome
+    it "includes metronome parameters in favorite links" do
+      visit root_path
+
+      # Set up a favorite with metronome after visiting page
       page.execute_script(<<~JS)
         localStorage.clear();
         localStorage.setItem('warrior_timer_favorites', JSON.stringify([
@@ -156,9 +159,8 @@ RSpec.describe "Metronome Persistence", type: :system, js: true do
           }
         ]));
       JS
-    end
 
-    it "includes metronome parameters in favorite links" do
+      # Reload to pick up the changes
       visit root_path
 
       # Find the favorite link
@@ -170,6 +172,23 @@ RSpec.describe "Metronome Persistence", type: :system, js: true do
     it "displays BPM indicator on favorited workouts with metronome" do
       visit root_path
 
+      # Set up a favorite with metronome after visiting page
+      page.execute_script(<<~JS)
+        localStorage.clear();
+        localStorage.setItem('warrior_timer_favorites', JSON.stringify([
+          {
+            code: '8(20w10r)',
+            name: 'Test Tabata',
+            metronome: true,
+            bpm: 140,
+            addedAt: '#{Time.current.iso8601}'
+          }
+        ]));
+      JS
+
+      # Reload to pick up the changes
+      visit root_path
+
       # Check for BPM display
       within('a[href*="8(20w10r)"]') do
         expect(page).to have_content("140 BPM")
@@ -178,6 +197,23 @@ RSpec.describe "Metronome Persistence", type: :system, js: true do
     end
 
     it "restores metronome settings when clicking favorite" do
+      visit root_path
+
+      # Set up a favorite with metronome after visiting page
+      page.execute_script(<<~JS)
+        localStorage.clear();
+        localStorage.setItem('warrior_timer_favorites', JSON.stringify([
+          {
+            code: '8(20w10r)',
+            name: 'Test Tabata',
+            metronome: true,
+            bpm: 140,
+            addedAt: '#{Time.current.iso8601}'
+          }
+        ]));
+      JS
+
+      # Reload to pick up the changes
       visit root_path
 
       # Click the favorite
@@ -194,12 +230,11 @@ RSpec.describe "Metronome Persistence", type: :system, js: true do
   end
 
   describe "recent workouts with metronome" do
-    before do
-      page.execute_script("localStorage.clear()")
-    end
-
     it "stores metronome settings in recent workouts" do
       visit timer_path(intervals: "8(20w10r)", metronome: "true", bpm: "120")
+
+      # Clear localStorage after visiting page
+      page.execute_script("localStorage.clear()")
 
       # Start the timer (which adds to recent)
       find('[data-action="timer#startPause"]').click
@@ -212,8 +247,11 @@ RSpec.describe "Metronome Persistence", type: :system, js: true do
     end
 
     it "includes metronome parameters in recent workout links" do
-      # Set up recent workout with metronome
+      visit root_path
+
+      # Set up recent workout with metronome after visiting page
       page.execute_script(<<~JS)
+        localStorage.clear();
         localStorage.setItem('warrior_timer_recents', JSON.stringify([
           {
             code: '10(30w30r)',
@@ -225,10 +263,11 @@ RSpec.describe "Metronome Persistence", type: :system, js: true do
         ]));
       JS
 
+      # Reload to pick up the changes
       visit root_path
 
-      # Find the recent workout link
-      recent_link = find('a[href*="10(30w30r)"]')
+      # Find the recent workout link (use first to avoid ambiguity)
+      recent_link = first('a[href*="10(30w30r)"]')
       expect(recent_link[:href]).to include("metronome=true")
       expect(recent_link[:href]).to include("bpm=100")
     end
