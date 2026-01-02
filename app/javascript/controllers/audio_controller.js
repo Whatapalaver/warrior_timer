@@ -51,33 +51,33 @@ export default class extends Controller {
 
   // Countdown beep (3-2-1)
   countdownBeep() {
-    this.beep(800, 100, 0.2)
+    this.beep(800, 100, 0.5)
   }
 
   // Segment transition beep (different tone for work vs rest)
   transitionBeep(segmentType) {
     if (segmentType === 'work') {
       // Higher, more urgent beep for work
-      this.beep(1000, 200, 0.3)
+      this.beep(1000, 200, 0.5)
     } else if (segmentType === 'rest') {
       // Lower, calmer beep for rest
-      this.beep(400, 200, 0.3)
+      this.beep(400, 200, 0.5)
     } else {
       // Default beep
-      this.beep(600, 200, 0.3)
+      this.beep(600, 200, 0.5)
     }
   }
 
   // Workout complete sound (two beeps)
   completeSound() {
-    this.beep(800, 150, 0.3)
+    this.beep(800, 150, 0.5)
     setTimeout(() => {
-      this.beep(1000, 150, 0.3)
+      this.beep(1000, 150, 0.5)
     }, 200)
   }
 
   // Metronome beep (low frequency, short duration)
   metronomeBeep() {
-    this.beep(200, 50, 0.15)
+    this.beep(200, 50, 0.4)
   }
 }
