@@ -1,4 +1,4 @@
-const CACHE_NAME = 'warrior-timer-v1';
+const CACHE_NAME = 'warrior-timer-v2';
 const URLS_TO_CACHE = [
   '/',
   '/manifest.json',
@@ -16,7 +16,7 @@ self.addEventListener('install', (event) => {
         console.log('Opened cache');
         return cache.addAll(URLS_TO_CACHE);
       })
-      .then(() => self.skipWaiting())
+      // Don't skip waiting - let the controller decide when to activate
   );
 });
 
@@ -34,6 +34,13 @@ self.addEventListener('activate', (event) => {
       );
     }).then(() => self.clients.claim())
   );
+});
+
+// Listen for skip waiting message from page
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 // Fetch event - network first, fallback to cache
