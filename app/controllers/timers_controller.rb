@@ -20,6 +20,10 @@ class TimersController < ApplicationController
     # Landing page with examples and documentation
   end
 
+  def builder
+    # Workout builder page
+  end
+
   def favorites
     # Full favorites page - list is managed client-side via localStorage
   end

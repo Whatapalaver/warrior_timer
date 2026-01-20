@@ -1,26 +1,15 @@
 <div class="min-h-screen bg-slate-900 text-white">
-  <!-- Hero Section -->
-  <div class="container mx-auto px-4 py-16">
-    <div class="text-center mb-16">
-      <h1 class="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-amber-500 via-red-500 to-emerald-500 bg-clip-text text-transparent">
-        Warrior Timer
-      </h1>
-      <p class="text-xl md:text-2xl text-slate-300 mb-8">
-        A gym interval timer with URL-based interval definitions
-      </p>
-      <div class="flex flex-wrap justify-center gap-4">
-        <%= link_to builder_path, class: "inline-block px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-bold rounded-lg transition-colors" do %>
-          🏗️ Build Workout
-        <% end %>
-        <%= link_to protocols_path, class: "inline-block px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-lg transition-colors" do %>
-          📚 Browse Training Protocols
-        <% end %>
-      </div>
-    </div>
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="max-w-4xl mx-auto mb-8">
+      <%= link_to root_path, class: "inline-block px-4 py-2 bg-slate-800/80 hover:bg-slate-700/80 rounded-lg text-sm font-semibold transition-colors mb-4" do %>
+        ← Home
+      <% end %>
 
-    <!-- Favorites and Recent Workouts -->
-    <div class="max-w-4xl mx-auto mb-16">
-      <%= render WorkoutLibrary::WorkoutLibraryComponent.new %>
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">Workout Builder</h1>
+      <p class="text-xl text-slate-300">
+        Create custom interval timers with our powerful syntax
+      </p>
     </div>
 
     <!-- Interval Builder -->
@@ -86,45 +75,6 @@
         >
           Go to Timer →
         </a>
-      </div>
-    </div>
-
-    <!-- Quick Start Examples -->
-    <div class="max-w-4xl mx-auto mb-16">
-      <h2 class="text-3xl font-bold mb-6 text-center">Quick Start Examples</h2>
-      <div class="grid md:grid-cols-2 gap-4">
-        <%
-          examples = [
-            { intervals: '30p+(1mw10r)*[Lymph Hops,Body Waves,Arm Swing,Trunk Twists,F Arm Circles,Bent Over Back Shake,B Arm Circles,Dead Arms,Golf Swings,Marches,Tip Toe Swings,Twist the Waist,Ballet Squat,Wide Arm Step Back,Wave Lunges,PushUps,Jump Rope]', title: 'Wildcard Wellness', description: 'Tai chi and Qi Gong mobility - 30s prep, then 17 movements (1 min work, 10s rest)', color: 'sky' },
-            { intervals: '20(20w10r)', title: 'Tabata', description: '20 rounds of 20s work, 10s rest', color: 'red' },
-            { intervals: '10(30w30r)', title: '30/30 Intervals', description: '10 rounds of 30s work, 30s rest', color: 'amber' },
-            { intervals: '4((30w30r)*[BS,SSS,DC,BSBL,2HP,FSC,FBP,IC])', title: 'Mark Wildman Split', description: '4 rounds through 8 exercises (30s work, 30s rest each)', color: 'violet' },
-            { intervals: '15(1mw)', title: 'EMOM 15', description: 'Every Minute On the Minute for 15 minutes', color: 'emerald' },
-            { intervals: '3(5mw2mr)', title: '3 x 5 Min Rounds', description: '3 rounds of 5 min work, 2 min rest', color: 'purple' }
-          ]
-
-          color_classes = {
-            'red' => 'text-red-400',
-            'amber' => 'text-amber-400',
-            'violet' => 'text-violet-400',
-            'emerald' => 'text-emerald-400',
-            'sky' => 'text-sky-400',
-            'purple' => 'text-purple-400'
-          }
-        %>
-
-        <% examples.each do |example| %>
-          <%= link_to "/timer/#{example[:intervals]}", class: "block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors" do %>
-            <h3 class="text-xl font-bold mb-2 <%= color_classes[example[:color]] %>"><%= example[:title] %></h3>
-            <code class="text-sm text-slate-300"><%= example[:intervals] %></code>
-            <p class="text-sm text-slate-400 mt-2"><%= example[:description] %></p>
-
-            <!-- Visual Preview -->
-            <div class="mt-4">
-              <%= render(ProtocolPreview::ProtocolPreviewComponent.new(code: example[:intervals])) %>
-            </div>
-          <% end %>
-        <% end %>
       </div>
     </div>
 
@@ -210,33 +160,5 @@
         </ol>
       </div>
     </div>
-
-    <!-- Features -->
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-3xl font-bold mb-6 text-center">Features</h2>
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-slate-800 rounded-lg p-6 text-center">
-          <div class="text-4xl mb-3">🎨</div>
-          <h3 class="font-bold mb-2">Color-Coded</h3>
-          <p class="text-sm text-slate-400">Different colors for each segment type</p>
-        </div>
-        <div class="bg-slate-800 rounded-lg p-6 text-center">
-          <div class="text-4xl mb-3">🔊</div>
-          <h3 class="font-bold mb-2">Audio Cues</h3>
-          <p class="text-sm text-slate-400">Countdown beeps and transition sounds</p>
-        </div>
-        <div class="bg-slate-800 rounded-lg p-6 text-center">
-          <div class="text-4xl mb-3">📱</div>
-          <h3 class="font-bold mb-2">Mobile-First</h3>
-          <p class="text-sm text-slate-400">Optimized for viewing across the gym</p>
-        </div>
-        <div class="bg-slate-800 rounded-lg p-6 text-center">
-          <div class="text-4xl mb-3">🎵</div>
-          <h3 class="font-bold mb-2">Metronome</h3>
-          <p class="text-sm text-slate-400">Adjustable BPM during work segments</p>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
-
