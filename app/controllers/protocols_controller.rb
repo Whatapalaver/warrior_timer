@@ -2,6 +2,13 @@ class ProtocolsController < ApplicationController
   def index
     @protocol_categories = [
       {
+        name: "Mobility",
+        description: "Movement preparation and recovery protocols",
+        protocols: [
+          { name: "Wildcard Wellness", code: "30p+(1mw10r)*[Lymph Hops,Body Waves,Arm Swing,Trunk Twists,F Arm Circles,Bent Over Back Shake,B Arm Circles,Dead Arms,Golf Swings,Marches,Tip Toe Swings,Twist the Waist,Ballet Squat,Wide Arm Step Back,Wave Lunges,PushUps,Jump Rope]", description: "Tai chi and Qi Gong mobility - 30s prep, then 17 movements (1 min work, 10s rest each)" }
+        ]
+      },
+      {
         name: "Classic Gym Intervals",
         protocols: [
           { name: "Tabata", code: "8(20w10r)", description: "The original HIIT protocol. 20s max effort, 10s rest, 8 rounds. Created by Dr. Izumi Tabata." },

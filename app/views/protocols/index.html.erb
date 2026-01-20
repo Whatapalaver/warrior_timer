@@ -64,14 +64,14 @@
               <div class="space-y-4">
                 <% category[:protocols].each do |protocol| %>
                   <%= link_to "/timer/#{protocol[:code]}", class: "block bg-slate-900/50 rounded-lg p-4 hover:bg-slate-900/70 transition-colors cursor-pointer" do %>
-                    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                    <div class="flex flex-col gap-3">
                       <div class="flex-1">
                         <h3 class="font-bold text-lg text-amber-400 mb-1"><%= protocol[:name] %></h3>
                         <p class="text-slate-300 text-sm mb-3"><%= protocol[:description] %></p>
                         <%= render(ProtocolPreview::ProtocolPreviewComponent.new(code: protocol[:code])) %>
                       </div>
                       <div class="flex items-center gap-2">
-                        <span class="font-mono text-sm px-4 py-2 bg-slate-700 rounded-lg whitespace-nowrap">
+                        <span class="font-mono text-sm px-4 py-2 bg-slate-700 rounded-lg break-all">
                           <%= protocol[:code] %> →
                         </span>
                       </div>
