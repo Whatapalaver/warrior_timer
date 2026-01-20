@@ -281,7 +281,7 @@ export default class extends Controller {
   }
 
   // Render favorites list
-  renderFavorites() {
+  async renderFavorites() {
     if (!this.hasFavoritesListTarget) return
 
     const favorites = this.getFavorites()
@@ -296,6 +296,7 @@ export default class extends Controller {
       return
     }
 
+    // Render with placeholders first for immediate feedback
     this.favoritesListTarget.innerHTML = favorites.map(fav => {
       let url = `/timer/${this.escapeHtml(fav.code)}`
       if (fav.metronome) {
@@ -303,7 +304,7 @@ export default class extends Controller {
       }
 
       return `
-        <a href="${url}" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group relative">
+        <a href="${url}" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group relative" data-code="${this.escapeHtml(fav.code)}">
           <div class="flex items-start justify-between mb-2">
             <h3 class="text-xl font-bold text-amber-400">${this.escapeHtml(fav.name)}</h3>
             <button
@@ -319,14 +320,19 @@ export default class extends Controller {
           <code class="text-sm text-slate-300 block mb-2">${this.escapeHtml(fav.code)}</code>
           ${fav.metronome ? `<div class="text-xs text-emerald-400 mb-2">♪ ${fav.bpm} BPM</div>` : ''}
           <div class="text-xs text-slate-500 mb-4">Added ${this.formatTimeAgo(fav.addedAt)}</div>
-          <div class="preview-placeholder bg-slate-700 h-6 rounded"></div>
+          <div class="preview-container bg-slate-700 h-6 rounded animate-pulse"></div>
         </a>
       `
     }).join('')
+
+    // Load previews asynchronously
+    for (const fav of favorites) {
+      this.loadPreview(fav.code, 'favorite')
+    }
   }
 
   // Render recents list
-  renderRecents() {
+  async renderRecents() {
     if (!this.hasRecentsListTarget) return
 
     const recents = this.getRecents()
@@ -341,6 +347,7 @@ export default class extends Controller {
       return
     }
 
+    // Render with placeholders first for immediate feedback
     this.recentsListTarget.innerHTML = recents.map(rec => {
       let url = `/timer/${this.escapeHtml(rec.code)}`
       if (rec.metronome) {
@@ -348,7 +355,7 @@ export default class extends Controller {
       }
 
       return `
-        <a href="${url}" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group relative">
+        <a href="${url}" class="block p-6 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group relative" data-code="${this.escapeHtml(rec.code)}">
           <div class="flex items-start justify-between mb-2">
             <h3 class="text-xl font-bold text-emerald-400">${this.escapeHtml(rec.name)}</h3>
             <button
@@ -364,10 +371,15 @@ export default class extends Controller {
           <code class="text-sm text-slate-300 block mb-2">${this.escapeHtml(rec.code)}</code>
           ${rec.metronome ? `<div class="text-xs text-emerald-400 mb-2">♪ ${rec.bpm} BPM</div>` : ''}
           <div class="text-xs text-slate-500 mb-4">Used ${this.formatTimeAgo(rec.usedAt)}</div>
-          <div class="preview-placeholder bg-slate-700 h-6 rounded"></div>
+          <div class="preview-container bg-slate-700 h-6 rounded animate-pulse"></div>
         </a>
       `
     }).join('')
+
+    // Load previews asynchronously
+    for (const rec of recents) {
+      this.loadPreview(rec.code, 'recent')
+    }
   }
 
   // Remove favorite by code (called from rendered button)
@@ -409,5 +421,64 @@ export default class extends Controller {
     if (diffDays < 7) return `${diffDays}d ago`
 
     return date.toLocaleDateString()
+  }
+
+  // Load and render preview for a workout
+  async loadPreview(code, type) {
+    try {
+      const response = await fetch(`/api/parse_intervals?intervals=${encodeURIComponent(code)}`)
+      const data = await response.json()
+
+      if (data.error) {
+        console.error('Preview error:', data.error)
+        return
+      }
+
+      const previewHTML = this.renderPreviewHTML(data.segments, data.total_duration)
+
+      // Find the card and update its preview
+      const targetList = type === 'favorite' ? this.favoritesListTarget : this.recentsListTarget
+      const card = targetList.querySelector(`a[data-code="${this.escapeHtml(code)}"]`)
+
+      if (card) {
+        const previewContainer = card.querySelector('.preview-container')
+        if (previewContainer) {
+          previewContainer.outerHTML = previewHTML
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load preview:', error)
+    }
+  }
+
+  // Render preview HTML from segments data
+  renderPreviewHTML(segments, totalDuration) {
+    if (!segments || segments.length === 0) {
+      return '<div class="h-6 w-full bg-slate-700 rounded"></div>'
+    }
+
+    const segmentColors = {
+      work: 'bg-red-500',
+      rest: 'bg-blue-500',
+      prepare: 'bg-amber-500',
+      warmup: 'bg-green-500',
+      cooldown: 'bg-purple-500'
+    }
+
+    const segmentsHTML = segments.map((segment, index) => {
+      const width = totalDuration > 0 ? (segment.duration_seconds / totalDuration * 100).toFixed(2) : 0
+      const color = segmentColors[segment.segment_type] || 'bg-slate-500'
+      const border = index < segments.length - 1 ? 'border-r border-slate-300' : ''
+
+      return `
+        <div
+          class="${color} transition-all hover:brightness-110 ${border}"
+          style="width: ${width}%"
+          title="${segment.segment_type}: ${segment.duration_seconds}s"
+        ></div>
+      `
+    }).join('')
+
+    return `<div class="h-6 w-full flex rounded overflow-hidden border border-slate-600">${segmentsHTML}</div>`
   }
 }
