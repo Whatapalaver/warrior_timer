@@ -1,5 +1,6 @@
 <div
   data-controller="workout-storage"
+  data-workout-storage-limit-value="4"
   class="space-y-16"
 >
   <!-- Favorites Section -->
@@ -11,7 +12,7 @@
       <% end %>
     </div>
 
-    <div data-workout-storage-target="favoritesList" data-workout-storage-limit-value="4" class="grid md:grid-cols-2 gap-4">
+    <div data-workout-storage-target="favoritesList" class="grid md:grid-cols-2 gap-4">
       <!-- Populated by JavaScript -->
       <div class="col-span-2 text-center py-12 text-slate-400 text-sm">
         <p class="text-lg">No favorites yet</p>
@@ -29,7 +30,7 @@
       <% end %>
     </div>
 
-    <div data-workout-storage-target="recentsList" data-workout-storage-limit-value="4" class="grid md:grid-cols-2 gap-4">
+    <div data-workout-storage-target="recentsList" class="grid md:grid-cols-2 gap-4">
       <!-- Populated by JavaScript -->
       <div class="col-span-2 text-center py-12 text-slate-400 text-sm">
         <p class="text-lg">No recent workouts</p>
