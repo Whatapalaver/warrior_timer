@@ -1,0 +1,31 @@
+<div class="min-h-screen bg-slate-900 text-white" data-controller="workout-storage">
+  <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <!-- Header -->
+    <div class="mb-8">
+      <%= link_to root_path, class: "inline-block px-4 py-2 bg-slate-800/80 hover:bg-slate-700/80 rounded-lg text-sm font-semibold transition-colors mb-4" do %>
+        ← Home
+      <% end %>
+
+      <div class="flex items-center justify-between mb-4">
+        <h1 class="text-4xl md:text-5xl font-bold">Recent Workouts</h1>
+        <button
+          data-action="click->workout-storage#clearRecents"
+          class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-semibold transition-colors"
+        >
+          Clear All
+        </button>
+      </div>
+      <p class="text-xl text-slate-300">
+        Your recently used timers
+      </p>
+    </div>
+
+    <!-- Recents Grid -->
+    <div class="grid md:grid-cols-2 gap-4" data-workout-storage-target="recentsList">
+      <div class="col-span-2 text-center py-12 text-slate-400 text-sm">
+        <p class="text-lg">No recent workouts</p>
+        <p class="text-xs mt-2">Your recently used timers will appear here</p>
+      </div>
+    </div>
+  </div>
+</div>

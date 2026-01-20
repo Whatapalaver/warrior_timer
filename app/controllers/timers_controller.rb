@@ -19,4 +19,12 @@ class TimersController < ApplicationController
   def index
     # Landing page with examples and documentation
   end
+
+  def favorites
+    # Full favorites page - list is managed client-side via localStorage
+  end
+
+  def recents
+    # Full recents page - list is managed client-side via localStorage
+  end
 end

@@ -5,7 +5,8 @@ export default class extends Controller {
   static targets = ["favoriteButton", "favoriteIcon", "favoritesList", "recentsList", "modal", "modalContent", "nameInput"]
   static values = {
     intervals: String,
-    name: String
+    name: String,
+    limit: Number
   }
 
   connect() {
@@ -284,7 +285,9 @@ export default class extends Controller {
   async renderFavorites() {
     if (!this.hasFavoritesListTarget) return
 
-    const favorites = this.getFavorites()
+    const allFavorites = this.getFavorites()
+    const limit = this.hasLimitValue ? this.limitValue : allFavorites.length
+    const favorites = allFavorites.slice(0, limit)
 
     if (favorites.length === 0) {
       this.favoritesListTarget.innerHTML = `
@@ -335,7 +338,9 @@ export default class extends Controller {
   async renderRecents() {
     if (!this.hasRecentsListTarget) return
 
-    const recents = this.getRecents()
+    const allRecents = this.getRecents()
+    const limit = this.hasLimitValue ? this.limitValue : allRecents.length
+    const recents = allRecents.slice(0, limit)
 
     if (recents.length === 0) {
       this.recentsListTarget.innerHTML = `
