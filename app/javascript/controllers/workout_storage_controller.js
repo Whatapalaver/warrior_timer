@@ -320,7 +320,7 @@ export default class extends Controller {
               ✕
             </button>
           </div>
-          <code class="text-sm text-slate-300 block mb-2">${this.escapeHtml(fav.code)}</code>
+          <code class="text-sm text-slate-300 block mb-2 break-all">${this.escapeHtml(fav.code)}</code>
           ${fav.metronome ? `<div class="text-xs text-emerald-400 mb-2">♪ ${fav.bpm} BPM</div>` : ''}
           <div class="text-xs text-slate-500 mb-4">Added ${this.formatTimeAgo(fav.addedAt)}</div>
           <div class="preview-container bg-slate-700 h-6 rounded animate-pulse"></div>
@@ -373,7 +373,7 @@ export default class extends Controller {
               ✕
             </button>
           </div>
-          <code class="text-sm text-slate-300 block mb-2">${this.escapeHtml(rec.code)}</code>
+          <code class="text-sm text-slate-300 block mb-2 break-all">${this.escapeHtml(rec.code)}</code>
           ${rec.metronome ? `<div class="text-xs text-emerald-400 mb-2">♪ ${rec.bpm} BPM</div>` : ''}
           <div class="text-xs text-slate-500 mb-4">Used ${this.formatTimeAgo(rec.usedAt)}</div>
           <div class="preview-container bg-slate-700 h-6 rounded animate-pulse"></div>
