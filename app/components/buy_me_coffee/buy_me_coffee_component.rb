@@ -4,6 +4,10 @@ module BuyMeCoffee
       @style = style
     end
 
+    def button_label
+      @style == :nav ? "Support" : "Buy me a Coffee"
+    end
+
     def button_classes
       case @style
       when :nav
