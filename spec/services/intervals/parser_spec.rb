@@ -55,6 +55,55 @@ RSpec.describe Intervals::Parser do
       end
     end
 
+    context 'with decimal minute notation' do
+      it 'parses 1.5m as 90 seconds' do
+        result = described_class.new('1.5mw').parse
+        expect(result).to eq([
+          { type: :work, duration: 90 }
+        ])
+      end
+
+      it 'parses 0.5m as 30 seconds' do
+        result = described_class.new('0.5mr').parse
+        expect(result).to eq([
+          { type: :rest, duration: 30 }
+        ])
+      end
+
+      it 'parses 2.5m as 150 seconds' do
+        result = described_class.new('2.5mw').parse
+        expect(result).to eq([
+          { type: :work, duration: 150 }
+        ])
+      end
+
+      it 'parses concatenated decimal minutes' do
+        result = described_class.new('1.5mw0.5mr').parse
+        expect(result).to eq([
+          { type: :work, duration: 90 },
+          { type: :rest, duration: 30 }
+        ])
+      end
+
+      it 'parses decimal minutes inside repetitions' do
+        result = described_class.new('3(1.5mw0.5mr)').parse
+        expected = []
+        3.times do
+          expected << { type: :work, duration: 90, repetition: true }
+          expected << { type: :rest, duration: 30, repetition: true }
+        end
+        expect(result).to eq(expected)
+      end
+
+      it 'rounds to the nearest second for odd decimals' do
+        # 0.33m = 19.8s, rounds to 20
+        result = described_class.new('0.33mw').parse
+        expect(result).to eq([
+          { type: :work, duration: 20 }
+        ])
+      end
+    end
+
     context 'with colon notation' do
       it 'parses minutes:seconds format' do
         result = described_class.new('1:30w').parse

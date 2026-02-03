@@ -76,7 +76,7 @@ module Intervals
         # Could be a simple segment or concatenated segments
         # Check if it matches a valid simple segment pattern with optional name
         # Valid segment types: w, r, wu, cd, p (1-2 chars)
-        if part =~ /^(\d+(?::\d+)?m?)(wu|cd|[wrp])(\[.*?\])?$/
+        if part =~ /^(\d+(?:\.\d+)?(?::\d+)?m?)(wu|cd|[wrp])(\[.*?\])?$/
           # Simple segment
           [parse_segment(part)]
         else
@@ -161,7 +161,7 @@ module Intervals
         elsif input[i] =~ /\d/
           # This is a simple segment - match the segment type more precisely
           # Segment types are: w, r, wu, cd, p (at most 2 characters), optionally followed by [Name]
-          if input[i..-1] =~ /^(\d+(?::\d+)?m?(?:wu|cd|[wrp])(?:\[[^\]]+\])?)/
+          if input[i..-1] =~ /^(\d+(?:\.\d+)?(?::\d+)?m?(?:wu|cd|[wrp])(?:\[[^\]]+\])?)/
             tokens << $1
             i += $1.length
           else
@@ -228,7 +228,7 @@ module Intervals
 
     def parse_segment(segment)
       # Match patterns like: 30w, 5mw, 1:30w, 30w[Squat]
-      match = segment.match(/^(\d+(?::\d+)?)(m?)(\w+)(?:\[([^\]]+)\])?$/)
+      match = segment.match(/^(\d+(?:\.\d+)?(?::\d+)?)(m?)(\w+)(?:\[([^\]]+)\])?$/)
 
       raise ParseError, "Invalid segment format: #{segment}" unless match
 
@@ -257,8 +257,8 @@ module Intervals
         seconds = parts[1].to_i
         minutes * 60 + seconds
       elsif minutes_suffix == 'm'
-        # Parse minutes notation (5m)
-        time_part.to_i * 60
+        # Parse minutes notation (5m or 1.5m)
+        (time_part.to_f * 60).round
       else
         # Parse bare seconds
         time_part.to_i
