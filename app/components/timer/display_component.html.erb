@@ -60,6 +60,20 @@
         </div>
       </div>
 
+      <!-- Metronome visual bar (shown only when metronome is active during work) -->
+      <div data-timer-target="metronomeBar" class="hidden w-full max-w-lg mx-auto mb-6 px-2">
+        <div class="relative h-10 flex items-center">
+          <!-- Track -->
+          <div class="absolute inset-x-0 h-2 bg-slate-700 rounded-full"></div>
+          <!-- Sliding marker -->
+          <div
+            data-timer-target="metronomeBarFill"
+            class="absolute top-1/2 -translate-y-1/2 w-8 h-8 bg-yellow-300 rounded-full shadow-lg shadow-yellow-300/60"
+            style="left: 0%;"
+          ></div>
+        </div>
+      </div>
+
       <!-- Round info -->
       <div
         class="text-center mb-8 text-xl md:text-2xl lg:text-3xl text-white font-semibold"

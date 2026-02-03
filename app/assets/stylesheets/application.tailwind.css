@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+@keyframes metronome-right {
+  0%   { left: 0%; }
+  100% { left: calc(100% - 2rem); }
+}
+
+@keyframes metronome-left {
+  0%   { left: calc(100% - 2rem); }
+  100% { left: 0%; }
+}

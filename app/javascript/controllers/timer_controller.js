@@ -15,7 +15,9 @@ export default class extends Controller {
     "metronomeBpm",
     "navButtons",
     "setupControls",
-    "mobileProgress"
+    "mobileProgress",
+    "metronomeBar",
+    "metronomeBarFill"
   ]
 
   static outlets = ["audio"]
@@ -393,10 +395,24 @@ export default class extends Controller {
 
   startMetronome() {
     const interval = (60 / this.metronomeBpm) * 1000 // Convert BPM to milliseconds
+
+    // Show the visual metronome bar and start moving right
+    this.showMetronomeBar()
+    this.metronomeDirection = true // true = right, false = left
+
+    // Play the first beep immediately and kick off the animation
+    if (this.hasAudioOutlet) {
+      this.audioOutlet.metronomeBeep()
+    }
+    this.applyMetronomeBarAnimation(interval)
+
     this.metronomeIntervalId = setInterval(() => {
       if (this.hasAudioOutlet) {
         this.audioOutlet.metronomeBeep()
       }
+      // Flip direction and animate
+      this.metronomeDirection = !this.metronomeDirection
+      this.applyMetronomeBarAnimation(interval)
     }, interval)
   }
 
@@ -405,6 +421,35 @@ export default class extends Controller {
       clearInterval(this.metronomeIntervalId)
       this.metronomeIntervalId = null
     }
+    this.hideMetronomeBar()
+  }
+
+  showMetronomeBar() {
+    if (this.hasMetronomeBarTarget) {
+      this.metronomeBarTarget.classList.remove('hidden')
+    }
+  }
+
+  hideMetronomeBar() {
+    if (this.hasMetronomeBarTarget) {
+      this.metronomeBarTarget.classList.add('hidden')
+      // Remove any inline animation styles from the fill
+      if (this.hasMetronomeBarFillTarget) {
+        this.metronomeBarFillTarget.style.animation = ''
+      }
+    }
+  }
+
+  applyMetronomeBarAnimation(intervalMs) {
+    if (!this.hasMetronomeBarFillTarget) return
+    const fill = this.metronomeBarFillTarget
+    const durationSec = intervalMs / 1000
+    const name = this.metronomeDirection ? 'metronome-right' : 'metronome-left'
+
+    // Force a reflow to restart the animation cleanly
+    fill.style.animation = 'none'
+    void fill.offsetWidth // trigger reflow
+    fill.style.animation = `${name} ${durationSec}s linear forwards`
   }
 
   // UI visibility helpers
