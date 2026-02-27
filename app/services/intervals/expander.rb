@@ -132,6 +132,9 @@ module Intervals
         # Add name if present
         expanded_segment[:name] = segment[:name] if segment[:name]
 
+        # Add bpm if present
+        expanded_segment[:bpm] = segment[:bpm] if segment[:bpm]
+
         result << expanded_segment
       end
 

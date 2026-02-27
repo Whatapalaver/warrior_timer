@@ -76,7 +76,7 @@ module Intervals
         # Could be a simple segment or concatenated segments
         # Check if it matches a valid simple segment pattern with optional name
         # Valid segment types: w, r, wu, cd, p (1-2 chars)
-        if part =~ /^(\d+(?:\.\d+)?(?::\d+)?m?)(wu|cd|[wrp])(\[.*?\])?$/
+        if part =~ /^(\d+(?:\.\d+)?(?::\d+)?m?)(wu|cd|[wrp])(?:@(\d+)bpm)?(?:\[([^\]]+)\])?$/
           # Simple segment
           [parse_segment(part)]
         else
@@ -161,7 +161,7 @@ module Intervals
         elsif input[i] =~ /\d/
           # This is a simple segment - match the segment type more precisely
           # Segment types are: w, r, wu, cd, p (at most 2 characters), optionally followed by [Name]
-          if input[i..-1] =~ /^(\d+(?:\.\d+)?(?::\d+)?m?(?:wu|cd|[wrp])(?:\[[^\]]+\])?)/
+          if input[i..-1] =~ /^(\d+(?:\.\d+)?(?::\d+)?m?(?:wu|cd|[wrp])(?:@\d+bpm)?(?:\[[^\]]+\])?)/
             tokens << $1
             i += $1.length
           else
@@ -227,15 +227,16 @@ module Intervals
     end
 
     def parse_segment(segment)
-      # Match patterns like: 30w, 5mw, 1:30w, 30w[Squat]
-      match = segment.match(/^(\d+(?:\.\d+)?(?::\d+)?)(m?)(\w+)(?:\[([^\]]+)\])?$/)
+      # Match patterns like: 30w, 5mw, 1:30w, 30w[Squat], 30w@60bpm, 30w@60bpm[Squat]
+      match = segment.match(/^(\d+(?:\.\d+)?(?::\d+)?)(m?)(\w+)(?:@(\d+)bpm)?(?:\[([^\]]+)\])?$/)
 
       raise ParseError, "Invalid segment format: #{segment}" unless match
 
       time_part = match[1]
       minutes_suffix = match[2]
       type_part = match[3]
-      name_part = match[4]
+      bpm_part = match[4]
+      name_part = match[5]
 
       type = SEGMENT_TYPES[type_part]
       raise ParseError, "Unknown segment type: #{type_part}" unless type
@@ -243,6 +244,7 @@ module Intervals
       duration = parse_duration(time_part, minutes_suffix)
 
       result = { type: type, duration: duration }
+      result[:bpm] = bpm_part.to_i if bpm_part
       result[:name] = decode_name(name_part) if name_part
       result
     end

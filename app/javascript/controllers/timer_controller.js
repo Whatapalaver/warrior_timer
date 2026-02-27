@@ -46,6 +46,9 @@ export default class extends Controller {
 
     // Initialize metronome settings from URL params or defaults
     this.initializeMetronomeFromURL()
+
+    // Hide global metronome controls if any segment has per-interval bpm
+    this.hideGlobalMetronomeIfNeeded()
   }
 
   disconnect() {
@@ -377,24 +380,25 @@ export default class extends Controller {
     // Stop existing metronome
     this.stopMetronome()
 
-    // Check if metronome toggle exists and update enabled state
-    if (this.hasMetronomeToggleTarget) {
-      this.metronomeEnabled = this.metronomeToggleTarget.checked
-    }
+    if (!this.isRunning || this.currentSegmentIndex < 0) return
 
-    // Only start metronome if enabled, running, and in a work segment
-    if (this.metronomeEnabled && this.isRunning && this.currentSegmentIndex >= 0) {
-      const segment = this.segmentsValue[this.currentSegmentIndex]
-      console.log('Current segment type:', segment.segment_type, 'Metronome enabled:', this.metronomeEnabled)
-      if (segment.segment_type === 'work') {
-        console.log('Starting metronome at', this.metronomeBpm, 'BPM')
-        this.startMetronome()
-      }
+    const segment = this.segmentsValue[this.currentSegmentIndex]
+
+    // Check if segment has per-interval bpm
+    if (segment.bpm) {
+      // Use per-segment bpm (overrides global metronome)
+      console.log('Starting metronome at segment bpm:', segment.bpm)
+      this.startMetronome(segment.bpm)
+    } else if (this.hasMetronomeToggleTarget && this.metronomeToggleTarget.checked && segment.segment_type === 'work') {
+      // Use global metronome for work segments
+      console.log('Starting metronome at global bpm:', this.metronomeBpm)
+      this.startMetronome(this.metronomeBpm)
     }
   }
 
-  startMetronome() {
-    const interval = (60 / this.metronomeBpm) * 1000 // Convert BPM to milliseconds
+  startMetronome(bpm) {
+    const effectiveBpm = bpm || this.metronomeBpm
+    const interval = (60 / effectiveBpm) * 1000 // Convert BPM to milliseconds
 
     // Show the visual metronome bar and start moving right
     this.showMetronomeBar()
@@ -496,6 +500,19 @@ export default class extends Controller {
     // Hide mobile progress
     if (this.hasMobileProgressTarget) {
       this.mobileProgressTarget.classList.add('hidden')
+    }
+  }
+
+  hideGlobalMetronomeIfNeeded() {
+    // Check if any segment has per-interval bpm
+    const hasPerIntervalBpm = this.segmentsValue.some(segment => segment.bpm)
+
+    if (hasPerIntervalBpm) {
+      // Find and hide the metronome controls container
+      const metronomeControls = document.querySelector('[data-timer-target="setupControls"]:has([data-timer-target="metronomeToggle"])')
+      if (metronomeControls) {
+        metronomeControls.style.display = 'none'
+      }
     }
   }
 

@@ -367,6 +367,113 @@ RSpec.describe Intervals::Parser do
         expect(result[-1]).to eq({ type: :cooldown, duration: 120 })
       end
 
+    context 'with @bpm notation' do
+      it 'parses segment with bpm' do
+        result = described_class.new('60w@30bpm').parse
+        expect(result).to eq([
+          { type: :work, duration: 60, bpm: 30 }
+        ])
+      end
+
+      it 'parses segment with bpm and name' do
+        result = described_class.new('60w@30bpm[Kettlebell]').parse
+        expect(result).to eq([
+          { type: :work, duration: 60, bpm: 30, name: 'Kettlebell' }
+        ])
+      end
+
+      it 'parses rest segment with bpm' do
+        result = described_class.new('30r@15bpm').parse
+        expect(result).to eq([
+          { type: :rest, duration: 30, bpm: 15 }
+        ])
+      end
+
+      it 'parses multiple segments with different bpm values (with +)' do
+        result = described_class.new('60w@30bpm+30r+60w@25bpm+30r').parse
+        expect(result).to eq([
+          { type: :work, duration: 60, bpm: 30 },
+          { type: :rest, duration: 30 },
+          { type: :work, duration: 60, bpm: 25 },
+          { type: :rest, duration: 30 }
+        ])
+      end
+
+      it 'parses concatenated segments with bpm (no + needed)' do
+        result = described_class.new('60w@30bpm30r60w@25bpm30r').parse
+        expect(result).to eq([
+          { type: :work, duration: 60, bpm: 30 },
+          { type: :rest, duration: 30 },
+          { type: :work, duration: 60, bpm: 25 },
+          { type: :rest, duration: 30 }
+        ])
+      end
+
+      it 'parses Viking Warrior conditioning protocol' do
+        result = described_class.new('1mw@10bpm+1mw@14bpm+1mw@18bpm+1mw@22bpm+1mw').parse
+        expect(result).to eq([
+          { type: :work, duration: 60, bpm: 10 },
+          { type: :work, duration: 60, bpm: 14 },
+          { type: :work, duration: 60, bpm: 18 },
+          { type: :work, duration: 60, bpm: 22 },
+          { type: :work, duration: 60 }
+        ])
+      end
+
+      it 'parses bpm with decimal minutes' do
+        result = described_class.new('1.5mw@40bpm').parse
+        expect(result).to eq([
+          { type: :work, duration: 90, bpm: 40 }
+        ])
+      end
+
+      it 'parses repetitions with bpm' do
+        result = described_class.new('3(60w@30bpm+30r)').parse
+        expected = []
+        3.times do
+          expected << { type: :work, duration: 60, bpm: 30, repetition: true }
+          expected << { type: :rest, duration: 30, repetition: true }
+        end
+        expect(result).to eq(expected)
+      end
+
+      it 'parses complex workout with bpm and names' do
+        result = described_class.new('5mwu+60w@30bpm[Squat]+30r+60w@25bpm[Press]+30r+2mcd').parse
+        expect(result).to eq([
+          { type: :warmup, duration: 300 },
+          { type: :work, duration: 60, bpm: 30, name: 'Squat' },
+          { type: :rest, duration: 30 },
+          { type: :work, duration: 60, bpm: 25, name: 'Press' },
+          { type: :rest, duration: 30 },
+          { type: :cooldown, duration: 120 }
+        ])
+      end
+
+      it 'parses circuit shorthand with bpm on work segments' do
+        result = described_class.new('(60w@30bpm+30r)*[A,B,C]').parse
+        expect(result.length).to eq(6)
+        expect(result[0]).to include(type: :work, duration: 60, bpm: 30, name: 'A', repetition: true)
+        expect(result[1]).to include(type: :rest, duration: 30, repetition: true)
+        expect(result[2]).to include(type: :work, duration: 60, bpm: 30, name: 'B', repetition: true)
+        expect(result[3]).to include(type: :rest, duration: 30, repetition: true)
+        expect(result[4]).to include(type: :work, duration: 60, bpm: 30, name: 'C', repetition: true)
+        expect(result[5]).to include(type: :rest, duration: 30, repetition: true)
+      end
+
+      it 'parses mixed segments with and without bpm' do
+        result = described_class.new('30w@60bpm+30r+45w+30r+60w@50bpm').parse
+        expect(result).to eq([
+          { type: :work, duration: 30, bpm: 60 },
+          { type: :rest, duration: 30 },
+          { type: :work, duration: 45 },
+          { type: :rest, duration: 30 },
+          { type: :work, duration: 60, bpm: 50 }
+        ])
+      end
+    end
+    end
+
+    context 'with named segments' do
       it 'handles Tabata with all segments named' do
         result = described_class.new('(20w10r)*[Burpees1,Burpees2,Burpees3,Burpees4,Burpees5,Burpees6,Burpees7,Burpees8]').parse
         expect(result.length).to eq(16)
