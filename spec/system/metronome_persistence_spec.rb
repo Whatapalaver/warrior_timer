@@ -9,28 +9,40 @@ RSpec.describe "Metronome Persistence", type: :system, js: true do
     it "initializes metronome checkbox from URL parameter" do
       visit timer_path(intervals: "8(20w10r)", metronome: "true", bpm: "120")
 
-      checkbox = find('[data-timer-target="metronomeToggle"]')
+      # Click edit button to reveal metronome controls
+      find('button', text: '✏️ Edit').click
+
+      checkbox = find('[data-timer-target="metronomeToggle"]', visible: true)
       expect(checkbox).to be_checked
     end
 
     it "initializes BPM value from URL parameter" do
       visit timer_path(intervals: "8(20w10r)", metronome: "true", bpm: "150")
 
-      bpm_input = find('[data-timer-target="metronomeBpm"]')
+      # Click edit button to reveal metronome controls
+      find('button', text: '✏️ Edit').click
+
+      bpm_input = find('[data-timer-target="metronomeBpm"]', visible: true)
       expect(bpm_input.value).to eq("150")
     end
 
     it "does not check metronome when parameter is not present" do
       visit timer_path(intervals: "8(20w10r)")
 
-      checkbox = find('[data-timer-target="metronomeToggle"]')
+      # Click edit button to reveal metronome controls
+      find('button', text: '✏️ Edit').click
+
+      checkbox = find('[data-timer-target="metronomeToggle"]', visible: true)
       expect(checkbox).not_to be_checked
     end
 
     it "uses default BPM when not specified in URL" do
       visit timer_path(intervals: "8(20w10r)", metronome: "true")
 
-      bpm_input = find('[data-timer-target="metronomeBpm"]')
+      # Click edit button to reveal metronome controls
+      find('button', text: '✏️ Edit').click
+
+      bpm_input = find('[data-timer-target="metronomeBpm"]', visible: true)
       expect(bpm_input.value).to eq("60")
     end
   end
@@ -58,12 +70,12 @@ RSpec.describe "Metronome Persistence", type: :system, js: true do
     it "does not add metronome parameters when metronome is disabled" do
       visit timer_path(intervals: "8(20w10r)")
 
-      # Ensure metronome is not checked
-      checkbox = find('[data-timer-target="metronomeToggle"]')
-      expect(checkbox).not_to be_checked
-
-      # Enable edit mode
+      # Enable edit mode to access metronome controls
       find('[data-workout-editor-target="editButton"]').click
+
+      # Ensure metronome is not checked
+      checkbox = find('[data-timer-target="metronomeToggle"]', visible: true)
+      expect(checkbox).not_to be_checked
 
       # Change the workout
       input = find('[data-workout-editor-target="input"]')
@@ -80,12 +92,12 @@ RSpec.describe "Metronome Persistence", type: :system, js: true do
     it "preserves updated BPM value when editing workout" do
       visit timer_path(intervals: "8(20w10r)", metronome: "true", bpm: "100")
 
-      # Change BPM
-      bpm_input = find('[data-timer-target="metronomeBpm"]')
-      bpm_input.fill_in with: "140"
-
-      # Enable edit mode
+      # Enable edit mode to access metronome controls
       find('[data-workout-editor-target="editButton"]').click
+
+      # Change BPM
+      bpm_input = find('[data-timer-target="metronomeBpm"]', visible: true)
+      bpm_input.fill_in with: "140"
 
       # Change the workout
       input = find('[data-workout-editor-target="input"]')
@@ -219,12 +231,15 @@ RSpec.describe "Metronome Persistence", type: :system, js: true do
       # Click the favorite
       click_link(href: /8\(20w10r\)/)
 
+      # Enable edit mode to access metronome controls
+      find('button', text: '✏️ Edit').click
+
       # Check that metronome is enabled
-      checkbox = find('[data-timer-target="metronomeToggle"]')
+      checkbox = find('[data-timer-target="metronomeToggle"]', visible: true)
       expect(checkbox).to be_checked
 
       # Check BPM value
-      bpm_input = find('[data-timer-target="metronomeBpm"]')
+      bpm_input = find('[data-timer-target="metronomeBpm"]', visible: true)
       expect(bpm_input.value).to eq("140")
     end
   end
