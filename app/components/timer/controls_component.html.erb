@@ -59,15 +59,44 @@
       </div>
 
       <!-- Edit mode (hidden by default) -->
-      <div data-workout-editor-target="editMode" class="hidden">
-        <input
-          type="text"
-          data-workout-editor-target="input"
-          data-action="keydown->workout-editor#preventPropagation"
-          value="<%= @intervals_param %>"
-          class="w-full px-3 py-2 bg-slate-700 text-white rounded text-sm font-mono border-2 border-slate-600 focus:border-emerald-500 focus:outline-none mb-2"
-          placeholder="e.g., 10(30w30r)"
-        />
+      <div data-workout-editor-target="editMode" class="hidden space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-400 mb-1 block">Workout Code:</label>
+          <input
+            type="text"
+            data-workout-editor-target="input"
+            data-action="keydown->workout-editor#preventPropagation"
+            value="<%= @intervals_param %>"
+            class="w-full px-3 py-2 bg-slate-700 text-white rounded text-sm font-mono border-2 border-slate-600 focus:border-emerald-500 focus:outline-none"
+            placeholder="e.g., 10(30w30r)"
+          />
+        </div>
+
+        <!-- Metronome settings in edit mode -->
+        <div class="border-t border-slate-700 pt-3">
+          <label class="flex items-center gap-2 mb-2">
+            <input
+              type="checkbox"
+              data-timer-target="metronomeToggle"
+              class="w-4 h-4 rounded bg-slate-700 border-slate-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900"
+            />
+            <span class="text-xs font-semibold">Metronome (work segments only)</span>
+          </label>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-400">BPM:</label>
+            <input
+              type="number"
+              data-timer-target="metronomeBpm"
+              class="w-16 px-2 py-1 bg-slate-700 text-white rounded text-center font-mono text-sm border border-slate-600"
+              value="60"
+              min="1"
+              max="180"
+              step="1"
+            />
+            <span class="text-xs text-slate-400">Applies when you click "Apply Changes"</span>
+          </div>
+        </div>
+
         <div class="flex gap-2">
           <button
             data-action="click->workout-editor#apply"
@@ -112,32 +141,4 @@
     </button>
   </div>
 
-  <!-- Metronome Controls (hidden when running) -->
-  <div data-timer-target="setupControls" class="flex justify-center items-center gap-3 flex-wrap border-t border-slate-700 pt-4 transition-opacity duration-300">
-    <label class="flex items-center gap-2">
-      <input
-        type="checkbox"
-        data-timer-target="metronomeToggle"
-        data-action="change->timer#toggleMetronome"
-        class="w-5 h-5 rounded bg-slate-700 border-slate-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900"
-      />
-      <span class="text-sm font-semibold">Metronome</span>
-    </label>
-
-    <div class="flex items-center gap-2">
-      <label class="text-sm opacity-75">BPM:</label>
-      <input
-        type="number"
-        data-timer-target="metronomeBpm"
-        data-action="change->timer#updateMetronomeBpm"
-        class="w-16 px-2 py-1 bg-slate-700 text-white rounded text-center font-mono text-sm"
-        value="60"
-        min="1"
-        max="180"
-        step="1"
-      />
-    </div>
-
-    <span class="text-xs opacity-50">(Work segments only)</span>
-  </div>
 </div>
