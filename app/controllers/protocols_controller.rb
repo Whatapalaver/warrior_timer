@@ -36,8 +36,8 @@ class ProtocolsController < ApplicationController
           { name: "Continuous 5min", code: "5mw", description: "Continuous work for 5 minutes" },
           { name: "Triple Tabata", code: "3(10(30w30r))", description: "3 exercises, Tabata timing each" },
           { name: "Long Form 10min", code: "10mw", description: "Long form continuous work" },
-          { name: "Viking Warrior Conditioning cMVO2 Test", code: "1mw@10bpm+1mw@14bpm+1mw@18bpm+1mw@22bpm+1mw", description: "cMVO2 protocol: 1 min each at 10, 14, 18, 22 BPM, then 1 min AMRAP" },
-          { name: "Viking Warrior Conditioning 15:15", code: "80(15w@32bpm+15r)", description: "80 rounds of 15s work at 32 BPM, 15s rest. Classic VWC protocol. Amend the bpm to be 4 * your personal number or the max reps recorded in minute 5 of the cMVO2 test" }
+          { name: "Viking Warrior Conditioning cMVO2 Test", code: "1mw@10reps+1mw@14reps+1mw@18reps+1mw@22reps+1mw", description: "cMVO2 protocol: 1 min each at 10, 14, 18, 22 reps/min, then 1 min AMRAP. Your rep count in minute 5 is your personal number." },
+          { name: "Viking Warrior Conditioning 15:15", code: "80(15w@8reps+15r)", description: "80 rounds of 15s work, 15s rest. Replace 8 with your personal rep count (max reps from minute 5 of the cMVO2 test)." }
         ]
       },
       {

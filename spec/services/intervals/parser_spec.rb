@@ -471,6 +471,42 @@ RSpec.describe Intervals::Parser do
         ])
       end
     end
+
+    context 'with @reps notation' do
+      it 'converts reps to bpm for a 15s interval' do
+        result = described_class.new('15w@7reps').parse
+        # 7 reps / 15s * 60 = 28 BPM
+        expect(result).to eq([{ type: :work, duration: 15, bpm: 28 }])
+      end
+
+      it 'converts reps to bpm for a 1-minute interval' do
+        result = described_class.new('1mw@10reps').parse
+        # 10 reps / 60s * 60 = 10 BPM
+        expect(result).to eq([{ type: :work, duration: 60, bpm: 10 }])
+      end
+
+      it 'handles the VWC 15:15 protocol with 8 reps' do
+        result = described_class.new('2(15w@8reps+15r)').parse
+        # 8 reps / 15s * 60 = 32 BPM
+        result.select { |s| s[:type] == :work }.each do |seg|
+          expect(seg[:bpm]).to eq(32)
+        end
+      end
+
+      it 'handles the cMVO2 test with reps notation' do
+        result = described_class.new('1mw@10reps+1mw@14reps+1mw@18reps+1mw@22reps+1mw').parse
+        expect(result[0]).to include(type: :work, duration: 60, bpm: 10)
+        expect(result[1]).to include(type: :work, duration: 60, bpm: 14)
+        expect(result[2]).to include(type: :work, duration: 60, bpm: 18)
+        expect(result[3]).to include(type: :work, duration: 60, bpm: 22)
+        expect(result[4]).to eq({ type: :work, duration: 60 })
+      end
+
+      it 'combines reps notation with a name' do
+        result = described_class.new('15w@8reps[Snatch]').parse
+        expect(result).to eq([{ type: :work, duration: 15, bpm: 32, name: 'Snatch' }])
+      end
+    end
     end
 
     context 'with named segments' do
