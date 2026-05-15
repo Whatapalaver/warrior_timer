@@ -33,11 +33,18 @@ export default class extends Controller {
     }
   }
 
+  // Encode a timer code for use in a URL path segment.
+  // Uses encodeURIComponent but restores characters that are valid in paths
+  // and expected unencoded by the timer DSL (+, @, (, )).
+  encodeTimerPath(code) {
+    return encodeURIComponent(code).replace(/%2B/gi, '+').replace(/%40/gi, '@')
+  }
+
   // Update all the links and embed codes
   updateLinks() {
     const baseUrl = window.location.origin
-    const timerUrl = `${baseUrl}/timer/${encodeURIComponent(this.codeValue)}`
-    const embedUrl = `${baseUrl}/embed/${encodeURIComponent(this.codeValue)}`
+    const timerUrl = `${baseUrl}/timer/${this.encodeTimerPath(this.codeValue)}`
+    const embedUrl = `${baseUrl}/embed/${this.encodeTimerPath(this.codeValue)}`
 
     // Update direct link
     if (this.hasDirectLinkTarget) {
