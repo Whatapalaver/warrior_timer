@@ -15,5 +15,5 @@ Rails.application.routes.draw do
 
   # Health check endpoints
   get "up" => "rails/health#show", as: :rails_health_check
-  get "/health", to: proc { [200, {}, ["OK"]] }
+  get "/health", to: proc { [ 200, {}, [ "OK" ] ] }
 end

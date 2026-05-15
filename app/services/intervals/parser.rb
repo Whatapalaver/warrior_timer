@@ -3,11 +3,11 @@ module Intervals
     class ParseError < StandardError; end
 
     SEGMENT_TYPES = {
-      'w' => :work,
-      'r' => :rest,
-      'wu' => :warmup,
-      'cd' => :cooldown,
-      'p' => :prepare
+      "w" => :work,
+      "r" => :rest,
+      "wu" => :warmup,
+      "cd" => :cooldown,
+      "p" => :prepare
     }.freeze
 
     def initialize(input)
@@ -24,10 +24,10 @@ module Intervals
 
     def parse_sequence(input)
       # First check if there's explicit + sequencing
-      if input.include?('+')
+      if input.include?("+")
         # Split on + to get individual segments or groups, but respect parentheses
         segments = []
-        parts = split_respecting_parens(input, '+')
+        parts = split_respecting_parens(input, "+")
         parts.each do |part|
           segments.concat(parse_part(part.strip))
         end
@@ -47,7 +47,7 @@ module Intervals
 
         raise ParseError, "Empty repetition" if inner.strip.empty?
 
-        names = names_str.split(',').map { |n| decode_name(n.strip) }
+        names = names_str.split(",").map { |n| decode_name(n.strip) }
 
         # Parse the inner content
         inner_segments = parse_inner_sequence(inner)
@@ -78,7 +78,7 @@ module Intervals
         # Valid segment types: w, r, wu, cd, p (1-2 chars)
         if part =~ /^(\d+(?:\.\d+)?(?::\d+)?m?)(wu|cd|[wrp])(?:@(\d+)(?:bpm|reps))?(?:\[([^\]]+)\])?$/
           # Simple segment
-          [parse_segment(part)]
+          [ parse_segment(part) ]
         else
           # Must be concatenated segments - tokenize them
           parse_inner_sequence(part)
@@ -88,7 +88,7 @@ module Intervals
 
     def parse_inner_sequence(input)
       # First check if there's a + (explicit sequencing)
-      if input.include?('+')
+      if input.include?("+")
         return parse_sequence(input)
       end
 
@@ -131,10 +131,10 @@ module Intervals
         end
 
         # Check for repetition pattern: N(...) or (...)
-        if input[i] == '(' || (input[i] =~ /\d/ && input[i..-1] =~ /^(\d+)\(/)
+        if input[i] == "(" || (input[i] =~ /\d/ && input[i..-1] =~ /^(\d+)\(/)
           # This is a repetition, find the matching closing paren
-          if input[i] == '('
-            count_str = ''
+          if input[i] == "("
+            count_str = ""
             paren_start = i
           else
             count_str = $1
@@ -146,9 +146,9 @@ module Intervals
 
           # Check if there's a *[...] after the parenthesis
           next_pos = paren_end + 1
-          if next_pos < input.length && input[next_pos] == '*' && input[next_pos + 1] == '['
+          if next_pos < input.length && input[next_pos] == "*" && input[next_pos + 1] == "["
             # Find the closing bracket
-            bracket_end = input.index(']', next_pos + 2)
+            bracket_end = input.index("]", next_pos + 2)
             raise ParseError, "Mismatched brackets" if bracket_end.nil?
             token = input[i..bracket_end]
             i = bracket_end + 1
@@ -176,16 +176,16 @@ module Intervals
     end
 
     def find_matching_paren(input, start_index)
-      return nil if input[start_index] != '('
+      return nil if input[start_index] != "("
 
       depth = 1
       i = start_index + 1
 
       while i < input.length && depth > 0
         case input[i]
-        when '('
+        when "("
           depth += 1
-        when ')'
+        when ")"
           depth -= 1
         end
         i += 1
@@ -201,10 +201,10 @@ module Intervals
 
       input.each_char do |char|
         case char
-        when '('
+        when "("
           depth += 1
           current << char
-        when ')'
+        when ")"
           depth -= 1
           raise ParseError, "Mismatched parentheses" if depth < 0
           current << char
@@ -246,22 +246,22 @@ module Intervals
 
       result = { type: type, duration: duration }
       if pace_number
-        result[:bpm] = pace_unit == 'reps' ? (pace_number.to_i * 60.0 / duration).round : pace_number.to_i
+        result[:bpm] = pace_unit == "reps" ? (pace_number.to_i * 60.0 / duration).round : pace_number.to_i
       end
       result[:name] = decode_name(name_part) if name_part
       result
     end
 
     def parse_duration(time_part, minutes_suffix)
-      if time_part.include?(':')
+      if time_part.include?(":")
         # Parse m:ss format
-        parts = time_part.split(':')
+        parts = time_part.split(":")
         raise ParseError, "Invalid time format: #{time_part}" if parts.length != 2
 
         minutes = parts[0].to_i
         seconds = parts[1].to_i
         minutes * 60 + seconds
-      elsif minutes_suffix == 'm'
+      elsif minutes_suffix == "m"
         # Parse minutes notation (5m or 1.5m)
         (time_part.to_f * 60).round
       else
@@ -274,7 +274,7 @@ module Intervals
     # Converts hyphens and underscores to spaces
     def decode_name(name)
       return nil if name.nil? || name.empty?
-      name.gsub(/[-_]/, ' ')
+      name.gsub(/[-_]/, " ")
     end
 
     # Apply names to work segments in a circuit pattern

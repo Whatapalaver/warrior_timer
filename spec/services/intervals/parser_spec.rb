@@ -185,7 +185,7 @@ RSpec.describe Intervals::Parser do
       end
 
       it 'handles all three syntax styles equivalently' do
-        codes = ['10w30r20w40r', '10w30r+20w40r', '10w+30r+20w+40r']
+        codes = [ '10w30r20w40r', '10w30r+20w40r', '10w+30r+20w+40r' ]
         expected = [
           { type: :work, duration: 10 },
           { type: :rest, duration: 30 },
@@ -367,6 +367,20 @@ RSpec.describe Intervals::Parser do
         expect(result[-1]).to eq({ type: :cooldown, duration: 120 })
       end
 
+      it 'handles Tabata with all segments named' do
+        result = described_class.new('(20w10r)*[Burpees1,Burpees2,Burpees3,Burpees4,Burpees5,Burpees6,Burpees7,Burpees8]').parse
+        expect(result.length).to eq(16)
+        work_segments = result.select { |s| s[:type] == :work }
+        expect(work_segments.length).to eq(8)
+        work_segments.each_with_index do |seg, i|
+          expect(seg[:name]).to eq("Burpees#{i + 1}")
+        end
+        result.select { |s| s[:type] == :rest }.each do |seg|
+          expect(seg[:name]).to be_nil
+        end
+      end
+    end
+
     context 'with @bpm notation' do
       it 'parses segment with bpm' do
         result = described_class.new('60w@30bpm').parse
@@ -476,13 +490,13 @@ RSpec.describe Intervals::Parser do
       it 'converts reps to bpm for a 15s interval' do
         result = described_class.new('15w@7reps').parse
         # 7 reps / 15s * 60 = 28 BPM
-        expect(result).to eq([{ type: :work, duration: 15, bpm: 28 }])
+        expect(result).to eq([ { type: :work, duration: 15, bpm: 28 } ])
       end
 
       it 'converts reps to bpm for a 1-minute interval' do
         result = described_class.new('1mw@10reps').parse
         # 10 reps / 60s * 60 = 10 BPM
-        expect(result).to eq([{ type: :work, duration: 60, bpm: 10 }])
+        expect(result).to eq([ { type: :work, duration: 60, bpm: 10 } ])
       end
 
       it 'handles the VWC 15:15 protocol with 8 reps' do
@@ -504,25 +518,7 @@ RSpec.describe Intervals::Parser do
 
       it 'combines reps notation with a name' do
         result = described_class.new('15w@8reps[Snatch]').parse
-        expect(result).to eq([{ type: :work, duration: 15, bpm: 32, name: 'Snatch' }])
-      end
-    end
-    end
-
-    context 'with named segments' do
-      it 'handles Tabata with all segments named' do
-        result = described_class.new('(20w10r)*[Burpees1,Burpees2,Burpees3,Burpees4,Burpees5,Burpees6,Burpees7,Burpees8]').parse
-        expect(result.length).to eq(16)
-        # Work segments should be named Burpees1 through Burpees8
-        work_segments = result.select { |s| s[:type] == :work }
-        expect(work_segments.length).to eq(8)
-        work_segments.each_with_index do |seg, i|
-          expect(seg[:name]).to eq("Burpees#{i + 1}")
-        end
-        # Rest segments should not have names
-        result.select { |s| s[:type] == :rest }.each do |seg|
-          expect(seg[:name]).to be_nil
-        end
+        expect(result).to eq([ { type: :work, duration: 15, bpm: 32, name: 'Snatch' } ])
       end
     end
   end

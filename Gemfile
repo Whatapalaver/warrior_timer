@@ -50,6 +50,10 @@ group :development, :test do
   # RSpec for testing
   gem "rspec-rails"
   gem "factory_bot_rails"
+
+  # Linting
+  gem "rubocop-rails-omakase", require: false
+  gem "rubocop-rspec", require: false
 end
 
 group :test do
@@ -67,4 +71,3 @@ group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 end
-

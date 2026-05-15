@@ -5,4 +5,4 @@ namespace :assets do
   end
 end
 
-Rake::Task["assets:precompile"].enhance(["assets:build_css"])
+Rake::Task["assets:precompile"].enhance([ "assets:build_css" ])

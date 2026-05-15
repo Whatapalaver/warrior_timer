@@ -51,7 +51,7 @@ RSpec.describe "Timers", type: :request do
       end
 
       it "handles various BPM values" do
-        [60, 100, 150, 180].each do |bpm|
+        [ 60, 100, 150, 180 ].each do |bpm|
           get timer_path(intervals: "8(20w10r)", metronome: "true", bpm: bpm)
           expect(response).to have_http_status(:success)
         end

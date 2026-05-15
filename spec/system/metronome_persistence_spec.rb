@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Metronome Persistence", type: :system, js: true do
+RSpec.describe "Metronome Persistence", :js, type: :system do
   before do
     driven_by(:selenium_chrome_headless)
   end
