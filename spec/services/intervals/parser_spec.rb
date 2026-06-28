@@ -489,36 +489,36 @@ RSpec.describe Intervals::Parser do
     context 'with @reps notation' do
       it 'converts reps to bpm for a 15s interval' do
         result = described_class.new('15w@7reps').parse
-        # 7 reps / 15s * 60 = 28 BPM
-        expect(result).to eq([ { type: :work, duration: 15, bpm: 28 } ])
+        # (7+1) beats needed for 7 inter-beat intervals = 8 * 60 / 15 = 32 BPM
+        expect(result).to eq([ { type: :work, duration: 15, bpm: 32 } ])
       end
 
       it 'converts reps to bpm for a 1-minute interval' do
         result = described_class.new('1mw@10reps').parse
-        # 10 reps / 60s * 60 = 10 BPM
-        expect(result).to eq([ { type: :work, duration: 60, bpm: 10 } ])
+        # (10+1) * 60 / 60 = 11 BPM
+        expect(result).to eq([ { type: :work, duration: 60, bpm: 11 } ])
       end
 
       it 'handles the VWC 15:15 protocol with 8 reps' do
         result = described_class.new('2(15w@8reps+15r)').parse
-        # 8 reps / 15s * 60 = 32 BPM
+        # (8+1) * 60 / 15 = 36 BPM → 9 beats → 8 inter-beat intervals
         result.select { |s| s[:type] == :work }.each do |seg|
-          expect(seg[:bpm]).to eq(32)
+          expect(seg[:bpm]).to eq(36)
         end
       end
 
       it 'handles the cMVO2 test with reps notation' do
         result = described_class.new('1mw@10reps+1mw@14reps+1mw@18reps+1mw@22reps+1mw').parse
-        expect(result[0]).to include(type: :work, duration: 60, bpm: 10)
-        expect(result[1]).to include(type: :work, duration: 60, bpm: 14)
-        expect(result[2]).to include(type: :work, duration: 60, bpm: 18)
-        expect(result[3]).to include(type: :work, duration: 60, bpm: 22)
+        expect(result[0]).to include(type: :work, duration: 60, bpm: 11)
+        expect(result[1]).to include(type: :work, duration: 60, bpm: 15)
+        expect(result[2]).to include(type: :work, duration: 60, bpm: 19)
+        expect(result[3]).to include(type: :work, duration: 60, bpm: 23)
         expect(result[4]).to eq({ type: :work, duration: 60 })
       end
 
       it 'combines reps notation with a name' do
         result = described_class.new('15w@8reps[Snatch]').parse
-        expect(result).to eq([ { type: :work, duration: 15, bpm: 32, name: 'Snatch' } ])
+        expect(result).to eq([ { type: :work, duration: 15, bpm: 36, name: 'Snatch' } ])
       end
     end
   end

@@ -246,7 +246,7 @@ module Intervals
 
       result = { type: type, duration: duration }
       if pace_number
-        result[:bpm] = pace_unit == "reps" ? (pace_number.to_i * 60.0 / duration).round : pace_number.to_i
+        result[:bpm] = pace_unit == "reps" ? ((pace_number.to_i + 1) * 60.0 / duration).round : pace_number.to_i
       end
       result[:name] = decode_name(name_part) if name_part
       result
