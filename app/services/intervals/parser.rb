@@ -54,9 +54,9 @@ module Intervals
 
         # Apply names to work segments
         apply_names_to_circuit(inner_segments, names, count)
-      # Check if this is a repetition: N(...) - allow empty parens to catch and error on them
-      elsif part =~ /^(\d+)\((.*)\)$/
-        count = $1.to_i
+      # Check if this is a repetition: N(...) or bare (...) treated as 1(...)
+      elsif part =~ /^(\d*)\((.*)\)$/
+        count = $1.empty? ? 1 : $1.to_i
         inner = $2
 
         raise ParseError, "Empty repetition" if inner.strip.empty?

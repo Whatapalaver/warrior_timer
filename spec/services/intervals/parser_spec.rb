@@ -227,6 +227,21 @@ RSpec.describe Intervals::Parser do
         end
         expect(result).to eq(expected)
       end
+
+      it 'parses bare group with no count as a single repetition' do
+        result = described_class.new('(30w15r)').parse
+        expect(result).to eq([
+          { type: :work, duration: 30, repetition: true },
+          { type: :rest, duration: 15, repetition: true }
+        ])
+      end
+
+      it 'parses bare group mixed with counted groups' do
+        result = described_class.new('2(5mw@42bpm+10mr)+(5mw@45bpm)').parse
+        expect(result.length).to eq(5)
+        expect(result[0]).to include(type: :work, duration: 300, bpm: 42)
+        expect(result[4]).to include(type: :work, duration: 300, bpm: 45)
+      end
     end
 
     context 'with nested repetitions' do
