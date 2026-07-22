@@ -17,7 +17,8 @@ export default class extends Controller {
     "setupControls",
     "mobileProgress",
     "metronomeBar",
-    "metronomeBarFill"
+    "metronomeBarFill",
+    "globalMetronomeControls"
   ]
 
   static outlets = ["audio"]
@@ -504,15 +505,10 @@ export default class extends Controller {
   }
 
   hideGlobalMetronomeIfNeeded() {
-    // Check if any segment has per-interval bpm
     const hasPerIntervalBpm = this.segmentsValue.some(segment => segment.bpm)
 
-    if (hasPerIntervalBpm) {
-      // Find and hide the metronome controls container
-      const metronomeControls = document.querySelector('[data-timer-target="setupControls"]:has([data-timer-target="metronomeToggle"])')
-      if (metronomeControls) {
-        metronomeControls.style.display = 'none'
-      }
+    if (hasPerIntervalBpm && this.hasGlobalMetronomeControlsTarget) {
+      this.globalMetronomeControlsTarget.style.display = 'none'
     }
   }
 
