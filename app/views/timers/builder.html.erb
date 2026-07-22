@@ -158,6 +158,35 @@
           </div>
         </div>
       </div>
+
+      <div class="bg-slate-800 rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold mb-4 text-amber-400">Metronome</h3>
+        <p class="text-slate-400 text-sm mb-3">Set a metronome pace globally or embed it per-interval in the workout code so it travels with the URL.</p>
+        <div class="space-y-3 text-sm">
+          <div>
+            <div class="mb-1"><strong class="text-slate-200">Global metronome:</strong></div>
+            <div class="text-slate-400">Use the BPM control above — applies to all work segments and is stored as a URL query parameter.</div>
+          </div>
+          <div>
+            <div class="mb-1"><strong class="text-slate-200">Per-interval BPM:</strong></div>
+            <div><code class="text-slate-300">5mw@43bpm</code> <span class="text-slate-400">- 5 min work at 43 BPM</span></div>
+            <div><code class="text-slate-300">30w@24bpm</code> <span class="text-slate-400">- 30s work at 24 BPM</span></div>
+            <div><code class="text-slate-300">10(30w@24bpm+30r)</code> <span class="text-slate-400">- 10 rounds, each work interval at 24 BPM</span></div>
+            <div class="text-slate-400 mt-1">↳ Per-interval BPM overrides the global metronome for that segment.</div>
+          </div>
+          <div>
+            <div class="mb-1"><strong class="text-slate-200">Per-interval reps:</strong></div>
+            <div><code class="text-slate-300">15w@8reps</code> <span class="text-slate-400">- 15s work, 8 reps (BPM calculated from duration)</span></div>
+            <div><code class="text-slate-300">30w@7reps</code> <span class="text-slate-400">- 30s work, 7 reps</span></div>
+            <div class="text-slate-400 mt-1">↳ Useful when you know your rep count for the interval rather than the BPM. BPM = (reps + 1) × 60 ÷ duration in seconds.</div>
+          </div>
+          <div>
+            <div class="mb-1"><strong class="text-slate-200">Mixed intervals at different paces:</strong></div>
+            <div><code class="text-slate-300">2(5mw@42bpm+10mr)+2(5mw@44bpm+15mr)+(5mw@45bpm)</code></div>
+            <div class="text-slate-400 ml-4">↳ Progressive pace — each block runs at a different BPM</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- How It Works -->
