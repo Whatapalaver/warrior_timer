@@ -68,6 +68,32 @@
           </div>
         </div>
 
+        <div class="mb-4 p-3 bg-slate-700/50 rounded-lg flex flex-wrap items-center gap-3">
+          <label class="flex items-center gap-2 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              data-interval-builder-target="metronomeToggle"
+              data-action="change->interval-builder#updateMetronome"
+              class="w-4 h-4 rounded accent-amber-500"
+            />
+            <span class="opacity-75">Metronome</span>
+          </label>
+          <div class="flex items-center gap-2">
+            <input
+              type="number"
+              data-interval-builder-target="metronomeBpm"
+              data-action="input->interval-builder#updateMetronome"
+              class="w-16 px-3 py-2 bg-slate-700 text-white rounded text-center font-mono border border-slate-600"
+              value="60"
+              min="1"
+              max="240"
+              step="1"
+            />
+            <span class="text-sm opacity-75">BPM</span>
+          </div>
+          <span data-interval-builder-target="metronomeFeedback" class="text-sm text-amber-400 opacity-75"></span>
+        </div>
+
         <a
           href="#"
           data-interval-builder-target="goButton"

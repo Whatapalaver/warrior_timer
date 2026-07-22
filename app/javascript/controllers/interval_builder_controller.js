@@ -1,9 +1,11 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input", "preview", "error", "goButton"]
+  static targets = ["input", "preview", "error", "goButton", "metronomeToggle", "metronomeBpm", "metronomeFeedback"]
 
   connect() {
+    this._currentInput = null
+    this.updateFeedback()
     this.parse()
   }
 
@@ -31,7 +33,30 @@ export default class extends Controller {
       })
   }
 
+  updateMetronome() {
+    this.updateFeedback()
+    this.updateGoUrl()
+  }
+
+  updateFeedback() {
+    if (!this.hasMetronomeFeedbackTarget) return
+    const bpm = parseFloat(this.metronomeBpmTarget.value) || 60
+    this.metronomeFeedbackTarget.textContent = `${(60 / bpm).toFixed(1)}s between beats`
+  }
+
+  updateGoUrl() {
+    if (!this._currentInput) return
+    const urlFriendly = this._currentInput.replace(/ /g, '-')
+    const url = new URL(`/timer/${urlFriendly}`, window.location.origin)
+    if (this.hasMetronomeToggleTarget && this.metronomeToggleTarget.checked) {
+      url.searchParams.set('metronome', 'true')
+      url.searchParams.set('bpm', this.metronomeBpmTarget.value || 60)
+    }
+    this.goButtonTarget.href = url.toString()
+  }
+
   showEmpty() {
+    this._currentInput = null
     this.previewTarget.innerHTML = `
       <div class="text-center text-slate-400 py-8">
         <p class="text-lg">Start typing to see a preview...</p>
@@ -43,6 +68,7 @@ export default class extends Controller {
   }
 
   showError(message) {
+    this._currentInput = null
     this.errorTarget.textContent = message
     this.errorTarget.classList.remove('hidden')
     this.previewTarget.innerHTML = ''
@@ -51,10 +77,8 @@ export default class extends Controller {
 
   showPreview(segments, input) {
     this.errorTarget.classList.add('hidden')
-
-    // Show Go button - convert spaces to hyphens for URL-friendly display
-    const urlFriendly = input.replace(/ /g, '-')
-    this.goButtonTarget.href = `/timer/${urlFriendly}`
+    this._currentInput = input
+    this.updateGoUrl()
     this.goButtonTarget.classList.remove('hidden')
 
     // Build visual preview
@@ -143,12 +167,4 @@ export default class extends Controller {
     return `${secs}s`
   }
 
-  goToTimer() {
-    const input = this.inputTarget.value.trim()
-    if (input) {
-      // Convert spaces to hyphens for URL-friendly display
-      const urlFriendly = input.replace(/ /g, '-')
-      window.location.href = `/timer/${urlFriendly}`
-    }
-  }
 }

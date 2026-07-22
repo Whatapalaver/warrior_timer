@@ -109,7 +109,7 @@
       type="number"
       data-timer-target="metronomeBpm"
       data-metronome-target="bpm"
-      data-action="keydown->metronome#preventPropagation"
+      data-action="keydown->metronome#preventPropagation input->metronome#updateFeedback"
       class="w-16 px-3 py-2 bg-slate-700 text-white rounded text-center font-mono"
       value="60"
       min="1"
@@ -117,6 +117,7 @@
       step="1"
     />
     <span class="text-sm opacity-75">BPM</span>
+    <span data-metronome-target="feedback" class="text-sm text-amber-400 opacity-75"></span>
     <button
       data-action="click->metronome#apply"
       class="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 rounded font-semibold transition-colors"

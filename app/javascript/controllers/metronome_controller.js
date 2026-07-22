@@ -1,13 +1,20 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["toggle", "bpm"]
+  static targets = ["toggle", "bpm", "feedback"]
 
   connect() {
     const params = new URLSearchParams(window.location.search)
     this.toggleTarget.checked = params.get('metronome') === 'true'
     const bpm = params.get('bpm')
     if (bpm) this.bpmTarget.value = bpm
+    this.updateFeedback()
+  }
+
+  updateFeedback() {
+    if (!this.hasFeedbackTarget) return
+    const bpm = parseFloat(this.bpmTarget.value) || 60
+    this.feedbackTarget.textContent = `${(60 / bpm).toFixed(1)}s between beats`
   }
 
   apply() {

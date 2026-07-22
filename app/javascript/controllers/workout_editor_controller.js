@@ -31,13 +31,22 @@ export default class extends Controller {
       return
     }
 
-    // Preserve any existing metronome query params from the current URL
-    const currentUrl = new URL(window.location.href)
+    // Preserve metronome state from live DOM, falling back to URL params
     const params = new URLSearchParams()
-    const metronome = currentUrl.searchParams.get('metronome')
-    const bpm = currentUrl.searchParams.get('bpm')
-    if (metronome) params.set('metronome', metronome)
-    if (bpm) params.set('bpm', bpm)
+    const metronomeToggle = document.querySelector('[data-metronome-target="toggle"]')
+    const metronomeBpm = document.querySelector('[data-metronome-target="bpm"]')
+    if (metronomeToggle && metronomeBpm) {
+      if (metronomeToggle.checked) {
+        params.set('metronome', 'true')
+        params.set('bpm', metronomeBpm.value || 60)
+      }
+    } else {
+      const currentUrl = new URL(window.location.href)
+      const metronome = currentUrl.searchParams.get('metronome')
+      const bpm = currentUrl.searchParams.get('bpm')
+      if (metronome) params.set('metronome', metronome)
+      if (bpm) params.set('bpm', bpm)
+    }
 
     let url = `/timer/${newIntervals}`
     const queryString = params.toString()
