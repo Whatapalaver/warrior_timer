@@ -1,3 +1,19 @@
+- name: Mace
+  description: Favourite mace sessions for competition training
+  protocols:
+    - name: 5 x 5 minute competition sets
+      code: "5(5mw+10mr)"
+      description: 5 sets of 5 minutes work with 10 minutes rest between. Simulates King of the Swing competition.
+    - name: 10 x 1 speed sets
+      code: "10(1mw+1mr)?metronome=true&bpm=45"
+      description: 10 sets of 1 minute high speed efforts. Refine the metronome to reflect your pace.
+    - name: 1:2 work:rest protocol
+      code: "10(1mw+2mr)?metronome=true&bpm=40"
+      description: 10 sets of 1 minute effort with 2 mins rest. Refine the metronome to reflect your desired pace.
+    - name: mace EMOM
+      code: "10(1mw)?metronome=true&bpm=47"
+      description: Complete 20 reps at target pace and then rest til the timer goes off for the next minute.
+
 - name: Mark Wildman / Kettlebell
   description: Mark Wildman's minimalist kettlebell protocols
   protocols:
