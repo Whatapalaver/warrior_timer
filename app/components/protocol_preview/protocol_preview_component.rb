@@ -1,7 +1,7 @@
 module ProtocolPreview
   class ProtocolPreviewComponent < ViewComponent::Base
     def initialize(code:)
-      @code = code
+      @code = code.to_s.split("?").first
     end
 
     def segments

@@ -18,7 +18,8 @@ export default class extends Controller {
     "mobileProgress",
     "metronomeBar",
     "metronomeBarFill",
-    "globalMetronomeControls"
+    "globalMetronomeControls",
+    "bpmDisplay"
   ]
 
   static outlets = ["audio"]
@@ -194,6 +195,7 @@ export default class extends Controller {
     this.countdownTarget.textContent = "00:00"
     this.roundInfoTarget.textContent = ""
     this.startPauseButtonTarget.textContent = "Start"
+    if (this.hasBpmDisplayTarget) this.bpmDisplayTarget.classList.add('hidden')
 
     // Reset to ready state
     this.currentSegmentIndex = -1
@@ -208,6 +210,7 @@ export default class extends Controller {
       this.countdownTarget.textContent = "00:00"
       this.roundInfoTarget.textContent = ""
       this.progressTarget.textContent = `Segment 0 of ${this.segmentsValue.length}`
+      if (this.hasBpmDisplayTarget) this.bpmDisplayTarget.classList.add('hidden')
       this.highlightOverviewSegment(-1)
       this.updateMobileProgress()
     } else {
@@ -218,6 +221,16 @@ export default class extends Controller {
         this.segmentTypeTarget.textContent = segment.name.toUpperCase()
       } else {
         this.segmentTypeTarget.textContent = this.formatSegmentType(segment.segment_type)
+      }
+
+      // Show per-interval BPM if present
+      if (this.hasBpmDisplayTarget) {
+        if (segment.bpm) {
+          this.bpmDisplayTarget.textContent = `${segment.bpm} BPM`
+          this.bpmDisplayTarget.classList.remove('hidden')
+        } else {
+          this.bpmDisplayTarget.classList.add('hidden')
+        }
       }
 
       // Update countdown
