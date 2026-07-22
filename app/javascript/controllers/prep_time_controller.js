@@ -22,7 +22,24 @@ export default class extends Controller {
       ? `${prepSegment}+${currentIntervals}`
       : prepSegment
 
-    // Update URL and reload
-    window.location.href = `/timer/${newIntervals}`
+    // Preserve metronome state from live DOM, falling back to URL params
+    const params = new URLSearchParams()
+    const metronomeToggle = document.querySelector('[data-metronome-target="toggle"]')
+    const metronomeBpm = document.querySelector('[data-metronome-target="bpm"]')
+    if (metronomeToggle && metronomeBpm) {
+      if (metronomeToggle.checked) {
+        params.set('metronome', 'true')
+        params.set('bpm', metronomeBpm.value || 60)
+      }
+    } else {
+      const currentUrl = new URL(window.location.href)
+      const metronome = currentUrl.searchParams.get('metronome')
+      const bpm = currentUrl.searchParams.get('bpm')
+      if (metronome) params.set('metronome', metronome)
+      if (bpm) params.set('bpm', bpm)
+    }
+
+    const queryString = params.toString()
+    window.location.href = `/timer/${newIntervals}` + (queryString ? `?${queryString}` : '')
   }
 }
