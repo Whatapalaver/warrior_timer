@@ -488,13 +488,15 @@ export default class extends Controller {
       this.navButtonsTarget.style.pointerEvents = 'auto'
     }
 
-    // Show setup controls
+    // Show setup controls, skipping any hidden due to per-interval BPM
     if (this.hasSetupControlsTarget) {
       this.setupControlsTargets.forEach(control => {
-        control.style.opacity = '1'
-        control.style.pointerEvents = 'auto'
-        control.style.height = 'auto'
-        control.style.overflow = 'visible'
+        if (!control.classList.contains('per-interval-hidden')) {
+          control.style.opacity = '1'
+          control.style.pointerEvents = 'auto'
+          control.style.height = 'auto'
+          control.style.overflow = 'visible'
+        }
       })
     }
 
@@ -508,6 +510,7 @@ export default class extends Controller {
     const hasPerIntervalBpm = this.segmentsValue.some(segment => segment.bpm)
 
     if (hasPerIntervalBpm && this.hasGlobalMetronomeControlsTarget) {
+      this.globalMetronomeControlsTarget.classList.add('per-interval-hidden')
       this.globalMetronomeControlsTarget.style.display = 'none'
     }
   }

@@ -72,31 +72,6 @@
           />
         </div>
 
-        <!-- Metronome settings in edit mode -->
-        <div data-timer-target="globalMetronomeControls" class="border-t border-slate-700 pt-3">
-          <label class="flex items-center gap-2 mb-2">
-            <input
-              type="checkbox"
-              data-timer-target="metronomeToggle"
-              class="w-4 h-4 rounded bg-slate-700 border-slate-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900"
-            />
-            <span class="text-xs font-semibold">Metronome (work segments only)</span>
-          </label>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-400">BPM:</label>
-            <input
-              type="number"
-              data-timer-target="metronomeBpm"
-              class="w-16 px-2 py-1 bg-slate-700 text-white rounded text-center font-mono text-sm border border-slate-600"
-              value="60"
-              min="1"
-              max="180"
-              step="1"
-            />
-            <span class="text-xs text-slate-400">Applies when you click "Apply Changes"</span>
-          </div>
-        </div>
-
         <div class="flex gap-2">
           <button
             data-action="click->workout-editor#apply"
@@ -113,6 +88,41 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Metronome (hidden when running, hidden when per-interval BPM is set) -->
+  <div
+    data-timer-target="setupControls globalMetronomeControls"
+    data-controller="metronome"
+    class="flex justify-center items-center gap-2 flex-wrap transition-opacity duration-300"
+  >
+    <label class="flex items-center gap-2 text-sm opacity-75 cursor-pointer">
+      <input
+        type="checkbox"
+        data-timer-target="metronomeToggle"
+        data-metronome-target="toggle"
+        class="w-4 h-4 rounded accent-amber-500"
+      />
+      Metronome
+    </label>
+    <input
+      type="number"
+      data-timer-target="metronomeBpm"
+      data-metronome-target="bpm"
+      data-action="keydown->metronome#preventPropagation"
+      class="w-16 px-3 py-2 bg-slate-700 text-white rounded text-center font-mono"
+      value="60"
+      min="1"
+      max="240"
+      step="1"
+    />
+    <span class="text-sm opacity-75">BPM</span>
+    <button
+      data-action="click->metronome#apply"
+      class="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 rounded font-semibold transition-colors"
+    >
+      Apply
+    </button>
   </div>
 
   <!-- Prep Time Input (hidden when running) -->
