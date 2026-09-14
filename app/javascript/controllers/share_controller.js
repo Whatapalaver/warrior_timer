@@ -37,7 +37,16 @@ export default class extends Controller {
   // Uses encodeURIComponent but restores characters that are valid in paths
   // and expected unencoded by the timer DSL (+, @, (, )).
   encodeTimerPath(code) {
-    return encodeURIComponent(code).replace(/%2B/gi, '+').replace(/%40/gi, '@')
+    return encodeURIComponent(code)
+      .replace(/%2B/gi, '+')
+      .replace(/%40/gi, '@')
+      .replace(/%28/gi, '(')
+      .replace(/%29/gi, ')')
+      .replace(/%5B/gi, '[')
+      .replace(/%5D/gi, ']')
+      .replace(/%2A/gi, '*')
+      .replace(/%2C/gi, ',')
+      .replace(/%3A/gi, ':')
   }
 
   // Update all the links and embed codes
