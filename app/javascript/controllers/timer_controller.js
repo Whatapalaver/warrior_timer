@@ -19,7 +19,8 @@ export default class extends Controller {
     "metronomeBar",
     "metronomeBarFill",
     "globalMetronomeControls",
-    "bpmDisplay"
+    "bpmDisplay",
+    "nextUp"
   ]
 
   static outlets = ["audio"]
@@ -211,6 +212,7 @@ export default class extends Controller {
       this.roundInfoTarget.textContent = ""
       this.progressTarget.textContent = `Segment 0 of ${this.segmentsValue.length}`
       if (this.hasBpmDisplayTarget) this.bpmDisplayTarget.classList.add('hidden')
+      if (this.hasNextUpTarget) this.nextUpTarget.textContent = ""
       this.highlightOverviewSegment(-1)
       this.updateMobileProgress()
     } else {
@@ -243,6 +245,11 @@ export default class extends Controller {
         this.roundInfoTarget.textContent = ""
       }
 
+      // Update Next Up
+      if (this.hasNextUpTarget) {
+        this.nextUpTarget.textContent = this.nextUpLabel()
+      }
+
       // Update progress
       this.progressTarget.textContent = `Segment ${this.currentSegmentIndex + 1} of ${this.segmentsValue.length}`
 
@@ -251,6 +258,22 @@ export default class extends Controller {
 
       // Update mobile progress
       this.updateMobileProgress()
+    }
+  }
+
+  nextUpLabel() {
+    const nextIndex = this.currentSegmentIndex + 1
+    if (nextIndex >= this.segmentsValue.length) return ""
+
+    const next = this.segmentsValue[nextIndex]
+    const typeName = this.formatSegmentType(next.segment_type)
+
+    if (next.name) {
+      return `Next Up: ${next.name.replace(/-/g, ' ')}`
+    } else if (next.round_number) {
+      return `Next Up: ${typeName} · Round ${next.round_number} of ${next.total_rounds}`
+    } else {
+      return `Next Up: ${typeName}`
     }
   }
 
