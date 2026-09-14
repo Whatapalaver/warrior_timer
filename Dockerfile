@@ -15,7 +15,8 @@ RUN apt-get update -qq && \
     git \
     nodejs \
     libjemalloc2 \
-    libvips && \
+    libvips \
+    libyaml-dev && \
     rm -rf /var/lib/apt/lists/*
 
 COPY Gemfile Gemfile.lock ./
