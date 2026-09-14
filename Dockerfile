@@ -1,4 +1,4 @@
-FROM ruby:3.1.2-slim-bookworm
+FROM ruby:3.1-slim-bookworm
 
 WORKDIR /rails
 
@@ -9,7 +9,7 @@ ENV RAILS_ENV="production" \
 
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y curl ca-certificates gnupg && \
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install --no-install-recommends -y \
     build-essential \
     git \
