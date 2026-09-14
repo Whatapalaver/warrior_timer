@@ -1,5 +1,4 @@
-ARG RUBY_VERSION=3.1.2
-FROM ruby:$RUBY_VERSION-slim
+FROM ruby:3.1.2-slim-bookworm
 
 WORKDIR /rails
 
@@ -8,8 +7,7 @@ ENV RAILS_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"
 
-    RUN sed -i 's|http://deb.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list && \
-    apt-get update -qq && \
+RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y curl ca-certificates gnupg && \
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install --no-install-recommends -y \
