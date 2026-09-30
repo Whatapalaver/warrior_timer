@@ -8,6 +8,11 @@ Rails.application.routes.draw do
   get "timer/:intervals", to: "timers#show", as: :timer, constraints: { intervals: /[^\/]+/ }
   get "embed/:code", to: "embeds#show", as: :embed_timer, constraints: { code: /[^\/]+/ }
 
+  # Admin routes
+  namespace :admin do
+    resource :protocols, only: [:edit, :update]
+  end
+
   # API routes
   namespace :api do
     get "parse_intervals", to: "intervals#parse"
