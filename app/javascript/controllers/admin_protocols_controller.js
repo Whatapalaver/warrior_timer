@@ -75,74 +75,6 @@ export default class extends Controller {
     })
   }
 
-  // ── Drag and drop (HTML5) ──────────────────────────────────────────────────
-
-  // Sections drag
-  handleSectionDragStart(event) {
-    this._draggedItem = event.currentTarget.closest("[data-section]")
-    this._draggedItem.classList.add("opacity-50")
-    event.dataTransfer.effectAllowed = "move"
-  }
-
-  handleSectionDragOver(event) {
-    event.preventDefault()
-    event.dataTransfer.dropEffect = "move"
-    const target = event.target.closest("[data-section]")
-    if (target && target !== this._draggedItem) {
-      const rect = target.getBoundingClientRect()
-      const midY = rect.top + rect.height / 2
-      if (event.clientY < midY) {
-        target.parentNode.insertBefore(this._draggedItem, target)
-      } else {
-        target.parentNode.insertBefore(this._draggedItem, target.nextSibling)
-      }
-    }
-  }
-
-  handleSectionDragEnd(event) {
-    this._draggedItem?.classList.remove("opacity-50")
-    this._draggedItem = null
-  }
-
-  handleSectionDragLeave(event) {}
-
-  handleSectionDrop(event) {
-    event.preventDefault()
-  }
-
-  // Protocols drag
-  handleProtocolDragStart(event) {
-    this._draggedProtocol = event.currentTarget.closest("[data-protocol]")
-    this._draggedProtocol.classList.add("opacity-50")
-    event.dataTransfer.effectAllowed = "move"
-  }
-
-  handleProtocolDragOver(event) {
-    event.preventDefault()
-    event.dataTransfer.dropEffect = "move"
-    const target = event.target.closest("[data-protocol]")
-    if (target && target !== this._draggedProtocol) {
-      const rect = target.getBoundingClientRect()
-      const midY = rect.top + rect.height / 2
-      if (event.clientY < midY) {
-        target.parentNode.insertBefore(this._draggedProtocol, target)
-      } else {
-        target.parentNode.insertBefore(this._draggedProtocol, target.nextSibling)
-      }
-    }
-  }
-
-  handleProtocolDragEnd(event) {
-    this._draggedProtocol?.classList.remove("opacity-50")
-    this._draggedProtocol = null
-  }
-
-  handleProtocolDragLeave(event) {}
-
-  handleProtocolDrop(event) {
-    event.preventDefault()
-  }
-
   // ── Private helpers ────────────────────────────────────────────────────────
 
   sectionsList() {
@@ -183,8 +115,39 @@ export default class extends Controller {
   _initDragHandleForItem(item) {
     const handle = item.querySelector("[data-drag-handle]")
     if (!handle) return
+
+    const isSection = item.hasAttribute("data-section")
+
     handle.addEventListener("mousedown", () => { item.draggable = true })
     handle.addEventListener("touchstart", () => { item.draggable = true }, { passive: true })
-    item.addEventListener("dragend", () => { item.draggable = false })
+
+    item.addEventListener("dragstart", (e) => {
+      if (isSection) { this._draggedItem = item } else { this._draggedProtocol = item }
+      item.classList.add("opacity-50")
+      e.dataTransfer.effectAllowed = "move"
+      e.stopPropagation()
+    })
+
+    item.addEventListener("dragover", (e) => {
+      const dragged = isSection ? this._draggedItem : this._draggedProtocol
+      if (!dragged || dragged === item) return
+      if (!isSection && dragged.closest("[data-protocols-list]") !== item.closest("[data-protocols-list]")) return
+      e.preventDefault()
+      e.stopPropagation()
+      const rect = item.getBoundingClientRect()
+      if (e.clientY < rect.top + rect.height / 2) {
+        item.parentNode.insertBefore(dragged, item)
+      } else {
+        item.parentNode.insertBefore(dragged, item.nextSibling)
+      }
+    })
+
+    item.addEventListener("drop", (e) => { e.preventDefault(); e.stopPropagation() })
+
+    item.addEventListener("dragend", () => {
+      item.classList.remove("opacity-50")
+      item.draggable = false
+      if (isSection) { this._draggedItem = null } else { this._draggedProtocol = null }
+    })
   }
 }
