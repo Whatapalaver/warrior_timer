@@ -31,12 +31,26 @@ cd warrior_timer
 
 # Install dependencies
 bundle install
+npm install
+
+# Set up local environment variables
+cp .env.example .env
+# Edit .env and fill in ADMIN_PASSWORD and GITHUB_TOKEN
 
 # Start the development server
 bin/dev
 ```
 
-The app will be available at `http://localhost:3000`
+The app will be available at `http://localhost:3009`
+
+### Environment Variables (local)
+
+Copy `.env.example` to `.env` (gitignored) and fill in:
+
+```
+ADMIN_PASSWORD=anything    # password for /admin/protocols/edit
+GITHUB_TOKEN=github_pat_…  # only needed if you want to save protocol edits
+```
 
 ## Running Tests
 
@@ -189,7 +203,20 @@ fly logs --no-tail
 
 **Environment Variables:**
 
-The app requires no environment variables for basic operation. All configuration is baked into the Docker image during build.
+The app requires two secrets for the admin protocols editor:
+
+| Variable | Purpose |
+|---|---|
+| `ADMIN_PASSWORD` | Password for HTTP Basic Auth at `/admin/protocols/edit` |
+| `GITHUB_TOKEN` | Fine-grained PAT with Contents: Read & Write on this repo |
+
+Set them on Fly.io:
+
+```bash
+fly secrets set ADMIN_PASSWORD=yourpassword GITHUB_TOKEN=github_pat_... --app warrior-timer
+```
+
+Generate the GitHub token at: GitHub → Settings → Developer settings → Personal access tokens → Fine-grained.
 
 **Configuration Files:**
 - `Dockerfile` - Multi-stage build with Node.js and Ruby
@@ -197,7 +224,7 @@ The app requires no environment variables for basic operation. All configuration
 - `.dockerignore` - Files excluded from Docker build
 
 **Build Process:**
-1. Install Node.js 20.x and system dependencies
+1. Install Node.js 22.x and system dependencies
 2. Install Ruby gems
 3. Install npm packages (Tailwind CSS)
 4. Build CSS with Tailwind CLI
